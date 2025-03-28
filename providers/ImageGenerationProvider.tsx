@@ -21,6 +21,9 @@ interface ImageGenerationContextProps {
   // Background type
   selectedBackgroundType: BackgroundType;
   setSelectedBackgroundType: (backgroundType: BackgroundType) => void;
+  // User extra addition to prompt
+  userPrompt: string | undefined;
+  setUserPrompt: (prompt: string | undefined) => void;
   // Save to gallery function
   saveToGallery: (imageBase64: string) => Promise<void>;
   generatedImage: string | null;
@@ -41,6 +44,9 @@ export const ImageGenerationContext = createContext<ImageGenerationContextProps>
   // Background type
   selectedBackgroundType: allBackgroundTypes[0],
   setSelectedBackgroundType: () => {},
+  // User extra addition to prompt
+  userPrompt: undefined,
+  setUserPrompt: () => {},
   // Save to gallery function
   saveToGallery: async () => {},
   generatedImage: null,
@@ -51,6 +57,7 @@ interface ImageGenerationProviderProps {
 }
 export const ImageGenerationProvider = ({ children }: ImageGenerationProviderProps) => {
   const router = useRouter();
+  const [userPrompt, setUserPrompt] = useState<string | undefined>(undefined);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [selectedShotSize, setSelectedShotSize] = useState<ShotSize>(allShotSizes[0]);
@@ -79,7 +86,8 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
         imageBase64,
         selectedShotSize.prompt,
         selectedPresentationType.prompt,
-        selectedBackgroundType.prompt
+        selectedBackgroundType.prompt,
+        userPrompt
       );
       if (result) {
         setGeneratedImage(result);
@@ -94,6 +102,8 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
   return (
     <ImageGenerationContext.Provider
       value={{
+        userPrompt,
+        setUserPrompt,
         uploadedImage,
         setUploadedImage,
         imageGeneration,

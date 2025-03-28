@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, FlatList } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image, FlatList, TextInput } from "react-native";
 import React from "react";
 import { Coins, History, ImagePlus, WandSparkles, LoaderCircle } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -23,6 +23,7 @@ export default function Home() {
           <PresentationTypeSelection />
           <ShotSizeSelection />
           <BackgroundTypeSelection />
+          <UserInput />
           <GenerateButton />
         </ScrollView>
       </SafeAreaView>
@@ -179,6 +180,22 @@ function BackgroundTypeSelection() {
             </TouchableOpacity>
           );
         }}
+      />
+    </View>
+  );
+}
+
+function UserInput() {
+  const { userPrompt, setUserPrompt } = useImageGeneration();
+  return (
+    <View className="w-full px-horizontal">
+      <TextInput
+        multiline
+        placeholderTextColor={"#787878"}
+        placeholder="Anything you would like to add?"
+        className="bg-secondaryBg p-3 rounded-xl border border-border text-white h-[100px] text-[16px]"
+        value={userPrompt}
+        onChangeText={setUserPrompt}
       />
     </View>
   );
