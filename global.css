@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .rect {
+        @apply rounded-[10px] bg-secondaryBg border border-border px-[8px] py-[4px] 
+    }
+}

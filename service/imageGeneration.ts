@@ -25,12 +25,15 @@ export const generateImage = async (
         responseModalities: ["image", "text"],
       },
     });
-    for (const part of response.candidates[0].content.parts) {
+    const candidates = response?.candidates ?? [];
+    if (candidates.length === 0) {
+      throw new Error("No candidates returned from image generation service.");
+    }
+    for (const part of candidates[0]?.content?.parts ?? []) {
       if (part.text) {
         console.log(part.text);
       } else if (part.inlineData) {
-        const imageData = part.inlineData.data;
-        return imageData;
+        return part.inlineData.data;
       }
     }
   } catch (error) {

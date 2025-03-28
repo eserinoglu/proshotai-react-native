@@ -3,6 +3,9 @@ import * as FileSystem from "expo-file-system";
 
 export const exportToGallery = async (imageBase64: string) => {
   try {
+    if (MediaLibrary.PermissionStatus.DENIED || MediaLibrary.PermissionStatus.UNDETERMINED) {
+      await MediaLibrary.requestPermissionsAsync();
+    }
     // Base64 verisini cihazın geçici dosya dizinine kaydet
     const fileUri = FileSystem.cacheDirectory + `photo_${Date.now()}.png`;
     await FileSystem.writeAsStringAsync(fileUri, imageBase64, {

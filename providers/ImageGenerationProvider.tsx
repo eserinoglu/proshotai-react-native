@@ -4,9 +4,7 @@ import { useRouter } from "expo-router";
 import { exportToGallery } from "@/service/imageSave";
 
 interface ImageGenerationContextProps {
-  uploadedImage: string | null;
-  setUploadedImage: (image: string | null) => void;
-  imageGeneration: () => Promise<void>;
+  imageGeneration: (imageBase64 : string) => Promise<void>;
   selectedShotSize: "wide" | "close" | "medium";
   setSelectedShotSize: (size: "wide" | "close" | "medium") => void;
   saveToGallery: (imageBase64: string) => Promise<void>;
@@ -14,8 +12,6 @@ interface ImageGenerationContextProps {
 }
 
 export const ImageGenerationContext = createContext<ImageGenerationContextProps>({
-  uploadedImage: null,
-  setUploadedImage: () => {},
   imageGeneration: async () => {},
   selectedShotSize: "wide",
   setSelectedShotSize: () => {},
@@ -28,7 +24,6 @@ interface ImageGenerationProviderProps {
 }
 export const ImageGenerationProvider = ({ children }: ImageGenerationProviderProps) => {
   const router = useRouter();
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [selectedShotSize, setSelectedShotSize] = useState<"wide" | "close" | "medium">("wide");
 
@@ -41,12 +36,12 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
     }
   };
 
-  const imageGeneration = async () => {
-    if (!uploadedImage) {
+  const imageGeneration = async (imageBase64 : string) => {
+    if (!imageBase64) {
       throw new Error("No image uploaded");
     }
     try {
-      const result = await generateImage(uploadedImage, selectedShotSize);
+      const result = await generateImage(imageBase64, selectedShotSize);
       if (result) {
         setGeneratedImage(result);
         router.push("/generated-image");
@@ -60,10 +55,8 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
   return (
     <ImageGenerationContext.Provider
       value={{
-        uploadedImage,
         selectedShotSize,
         setSelectedShotSize,
-        setUploadedImage,
         imageGeneration,
         generatedImage,
         saveToGallery,
