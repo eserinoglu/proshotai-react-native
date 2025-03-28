@@ -2,19 +2,46 @@ import { createContext, useContext, useState } from "react";
 import { generateImage } from "@/service/imageGeneration";
 import { useRouter } from "expo-router";
 import { exportToGallery } from "@/service/imageSave";
+import { allShotSizes, ShotSize } from "@/types/shotSize";
+import { allPresentationTypes, PresentationType } from "@/types/presentationType";
+import { allBackgroundTypes, BackgroundType } from "@/types/backgroundType";
 
 interface ImageGenerationContextProps {
-  imageGeneration: (imageBase64 : string) => Promise<void>;
-  selectedShotSize: "wide" | "close" | "medium";
-  setSelectedShotSize: (size: "wide" | "close" | "medium") => void;
+  // Uploaded Image
+  uploadedImage: string | null;
+  setUploadedImage: (image: string | null) => void;
+  // Image generation function
+  imageGeneration: (imageBase64: string) => Promise<void>;
+  // Shot size
+  selectedShotSize: ShotSize;
+  setSelectedShotSize: (size: ShotSize) => void;
+  // Presentation type
+  selectedPresentationType: PresentationType;
+  setSelectedPresentationType: (presentationType: PresentationType) => void;
+  // Background type
+  selectedBackgroundType: BackgroundType;
+  setSelectedBackgroundType: (backgroundType: BackgroundType) => void;
+  // Save to gallery function
   saveToGallery: (imageBase64: string) => Promise<void>;
   generatedImage: string | null;
 }
 
 export const ImageGenerationContext = createContext<ImageGenerationContextProps>({
+  // Uploaded Image
+  uploadedImage: null,
+  setUploadedImage: () => {},
+  // Image generation funciton
   imageGeneration: async () => {},
-  selectedShotSize: "wide",
+  // Shot size
+  selectedShotSize: allShotSizes[0],
   setSelectedShotSize: () => {},
+  // Presentation type
+  selectedPresentationType: allPresentationTypes[0],
+  setSelectedPresentationType: () => {},
+  // Background type
+  selectedBackgroundType: allBackgroundTypes[0],
+  setSelectedBackgroundType: () => {},
+  // Save to gallery function
   saveToGallery: async () => {},
   generatedImage: null,
 });
@@ -24,8 +51,15 @@ interface ImageGenerationProviderProps {
 }
 export const ImageGenerationProvider = ({ children }: ImageGenerationProviderProps) => {
   const router = useRouter();
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [selectedShotSize, setSelectedShotSize] = useState<"wide" | "close" | "medium">("wide");
+  const [selectedShotSize, setSelectedShotSize] = useState<ShotSize>(allShotSizes[0]);
+  const [selectedPresentationType, setSelectedPresentationType] = useState<PresentationType>(
+    allPresentationTypes[0]
+  );
+  const [selectedBackgroundType, setSelectedBackgroundType] = useState<BackgroundType>(
+    allBackgroundTypes[0]
+  );
 
   const saveToGallery = async (imageBase64: string) => {
     try {
@@ -36,12 +70,17 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
     }
   };
 
-  const imageGeneration = async (imageBase64 : string) => {
+  const imageGeneration = async (imageBase64: string) => {
     if (!imageBase64) {
       throw new Error("No image uploaded");
     }
     try {
-      const result = await generateImage(imageBase64, selectedShotSize);
+      const result = await generateImage(
+        imageBase64,
+        selectedShotSize.prompt,
+        selectedPresentationType.prompt,
+        selectedBackgroundType.prompt
+      );
       if (result) {
         setGeneratedImage(result);
         router.push("/generated-image");
@@ -55,11 +94,17 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
   return (
     <ImageGenerationContext.Provider
       value={{
+        uploadedImage,
+        setUploadedImage,
+        imageGeneration,
         selectedShotSize,
         setSelectedShotSize,
-        imageGeneration,
-        generatedImage,
+        selectedPresentationType,
+        setSelectedPresentationType,
+        selectedBackgroundType,
+        setSelectedBackgroundType,
         saveToGallery,
+        generatedImage,
       }}
     >
       {children}

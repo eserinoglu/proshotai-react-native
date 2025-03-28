@@ -4,11 +4,17 @@ const genAI = new GoogleGenAI({ apiKey: "AIzaSyC6ASYNRqaatr7e3iTsJrxUvSElaWTUARA
 
 export const generateImage = async (
   imageBase64: string,
-  shotSize: "wide" | "close" | "medium"
+  shotSizePrompt: string,
+  presentationTypePrompt: string,
+  backgroundTypePrompt: string
 ): Promise<string | undefined> => {
+  // Prompt for the image generation model
+  const prompt = `
+  Generate a high-quality, professional product image with realistic lighting, sharp details, and a visually appealing composition. The product should be well-lit, with natural shadows and highlights enhancing its form. Ensure the background complements the product without distracting from it. The image should be photorealistic, suitable for commercial use, and free from artifacts or distortions. ${shotSizePrompt} ${presentationTypePrompt} ${backgroundTypePrompt}`;
+
   const contents = [
     {
-      text: `Show this product/products being worn by a model. High-quality fashion photography with a solid studio background.Studio lighting with an ultra-realistic finish.Shot size: ${shotSize}. - "Close" means a zoomed-in shot focusing on the product details. - "Medium" means a mid-range shot showing the product and some of the model's body. - "Wide" means a full-body shot showing the entire outfit with surrounding context.`,
+      text: prompt.trim(),
     },
     {
       inlineData: {
