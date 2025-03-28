@@ -5,6 +5,9 @@ import { exportToGallery } from "@/service/imageSave";
 import { allShotSizes, ShotSize } from "@/types/shotSize";
 import { allPresentationTypes, PresentationType } from "@/types/presentationType";
 import { allBackgroundTypes, BackgroundType } from "@/types/backgroundType";
+import { GenerationHistory } from "@/types/generationHistory";
+import { base64ToUri } from "@/utils/base64ToUri";
+import { createHistory } from "@/service/database/historyDatabase";
 
 interface ImageGenerationContextProps {
   // Uploaded Image
@@ -26,7 +29,7 @@ interface ImageGenerationContextProps {
   setUserPrompt: (prompt: string | undefined) => void;
   // Save to gallery function
   saveToGallery: (imageBase64: string) => Promise<void>;
-  generatedImage: string | null;
+  generatedImage: GenerationHistory | null;
 }
 
 export const ImageGenerationContext = createContext<ImageGenerationContextProps>({
@@ -59,7 +62,7 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
   const router = useRouter();
   const [userPrompt, setUserPrompt] = useState<string | undefined>(undefined);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<GenerationHistory | null>(null);
   const [selectedShotSize, setSelectedShotSize] = useState<ShotSize>(allShotSizes[0]);
   const [selectedPresentationType, setSelectedPresentationType] = useState<PresentationType>(
     allPresentationTypes[0]
@@ -90,7 +93,16 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
         userPrompt
       );
       if (result) {
-        setGeneratedImage(result);
+        const uri = await base64ToUri(result);
+        const generatedImage: GenerationHistory = {
+          imageUri: uri,
+          shotSize: selectedShotSize.type,
+          presentationType: selectedPresentationType.type,
+          backgroundType: selectedBackgroundType.type,
+          createdAt: new Date().toISOString(),
+        };
+        setGeneratedImage(generatedImage);
+        await createHistory(generatedImage);
         router.push("/generated-image");
       }
     } catch (error) {

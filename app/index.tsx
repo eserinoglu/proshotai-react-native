@@ -7,6 +7,7 @@ import { allShotSizes } from "@/types/shotSize";
 import { allBackgroundTypes } from "@/types/backgroundType";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useImageGeneration } from "@/providers/ImageGenerationProvider";
+import { useRouter } from "expo-router";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -32,13 +33,17 @@ export default function Home() {
 }
 
 function Header() {
+  const router = useRouter();
   return (
     <View className="w-full flex flex-row items-center justify-between px-horizontal">
       <TouchableOpacity className="rect flex flex-row items-center gap-2">
         <Coins size={20} color="#FF9900" />
         <Text className="text-white font-medium">5 CREDITS</Text>
       </TouchableOpacity>
-      <TouchableOpacity className="rect flex flex-row items-center gap-2">
+      <TouchableOpacity
+        onPress={() => router.push("/history")}
+        className="rect flex flex-row items-center gap-2"
+      >
         <History size={20} color="#787878" />
         <Text className="font-medium text-secondaryText">History</Text>
       </TouchableOpacity>

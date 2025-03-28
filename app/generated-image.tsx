@@ -6,24 +6,11 @@ import { BlurView } from "expo-blur";
 export default function GeneratedImage() {
   const { generatedImage } = useImageGeneration();
   return (
-    <View className="flex-1 px-horizontal bg-white dark:bg-black">
+    <View className="flex-1 px-horizontal bg-background">
       <SafeAreaView className="flex-1 flex flex-col">
-        <View className="w-full h-[500px] rounded-xl overflow-hidden">
+        <View className="w-full h-[500px] rounded-xl overflow-hidden bg-secondaryBg">
           <Image
-            source={{ uri: `data:image/png;base64,${generatedImage}` }}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              zIndex: 1,
-            }}
-            resizeMode="cover"
-          />
-          <BlurView intensity={20} className="absolute w-full h-full top-0 left-0 z-[3]" />
-          <Image
-            source={{ uri: `data:image/png;base64,${generatedImage}` }}
+            source={{ uri: generatedImage?.imageUri }}
             style={{ width: "100%", height: "100%", zIndex: 3 }}
             resizeMode="contain"
           />
@@ -38,7 +25,7 @@ function DownloadButton() {
   const { generatedImage, saveToGallery } = useImageGeneration();
   const handleSaveToGallery = async () => {
     if (!generatedImage) return;
-    await saveToGallery(generatedImage);
+    await saveToGallery(generatedImage.imageUri);
   };
   return (
     <TouchableOpacity

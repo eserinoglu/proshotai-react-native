@@ -11,7 +11,7 @@ export const generateImage = async (
 ): Promise<string | undefined> => {
   // Prompt for the image generation model
   let basePrompt = `
-  Generate a high-quality, professional product image with realistic lighting, sharp details, and a visually appealing composition. The product should be well-lit, with natural shadows and highlights enhancing its form. Ensure the background complements the product without distracting from it. The image should be photorealistic, suitable for commercial use, and free from artifacts or distortions. ${shotSizePrompt} ${presentationTypePrompt} ${backgroundTypePrompt}`;
+  Generate a high-quality, professional product image with realistic lighting, sharp details, and a visually appealing composition for advertising photography. The product should be well-lit, with natural shadows and highlights enhancing its form. Ensure the background complements the product without distracting from it. The image should be photorealistic, suitable for commercial use, and free from artifacts or distortions. ${shotSizePrompt} ${presentationTypePrompt} ${backgroundTypePrompt}`;
 
   if (userPrompt && userPrompt.trim() !== "") {
     basePrompt += ` Additionally, consider the following user request: "${userPrompt}"`;
