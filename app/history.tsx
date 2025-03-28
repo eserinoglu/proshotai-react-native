@@ -16,19 +16,26 @@ export default function History() {
     fetchHistory();
   }, []);
 
-  const imageWidth = Dimensions.get("window").width / 3
+  const imageWidth = (Dimensions.get("window").width - 32) / 3 - 10;
 
   return (
     <View className="flex-1 px-horizontal bg-background">
-      <SafeAreaView className="flex-1 flex-col gap-5 pt-8">
-        <Text className="text-[30px] font-bold text-white">History</Text>
+      <SafeAreaView className="flex-1 flex-col gap-5">
         <FlatList
+          ListHeaderComponent={() => (
+            <Text className="text-[30px] font-bold text-white">History</Text>
+          )}
+          contentContainerClassName="gap-5 mt-8"
           data={history}
-          keyExtractor={(item) => item.id!.toString()}
+          keyExtractor={(item) => item.imageUri}
           ListEmptyComponent={() => <EmptyListComponent />}
           numColumns={3}
+          columnWrapperClassName="gap-[10px]"
           renderItem={({ item }) => (
-            <Image source={{ uri: item.imageUri }} style={{ width: imageWidth, aspectRatio : 1, borderRadius: 10 }} />
+            <Image
+              source={{ uri: item.imageUri }}
+              style={{ width: imageWidth, aspectRatio: 1, borderRadius: 10 }}
+            />
           )}
         />
       </SafeAreaView>
@@ -40,7 +47,9 @@ function EmptyListComponent() {
   return (
     <View className="flex-1 flex-col items-center justify-center gap-3 mt-20">
       <ImageMinus size={60} color="#787878" strokeWidth={1} />
-      <Text className="text-secondaryText font-medium text-[16px]">You haven't generated any image yet.</Text>
+      <Text className="text-secondaryText font-medium text-[16px]">
+        You haven't generated any image yet.
+      </Text>
     </View>
   );
 }
