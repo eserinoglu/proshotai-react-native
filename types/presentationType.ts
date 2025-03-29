@@ -13,8 +13,7 @@ export const allPresentationTypes: PresentationType[] = [
   },
   {
     type: "In Use",
-    prompt:
-      "Show the product in action, being used in a real-world scenario to demonstrate its functionality.",
+    prompt: "Show the product in action, being used in a real-world scenario to demonstrate its functionality.",
     thumbnail: require("@/assets/images/inuse.png"),
   },
   {
@@ -25,8 +24,7 @@ export const allPresentationTypes: PresentationType[] = [
   },
   {
     type: "Flat",
-    prompt:
-      "Lay the product flat on a complementary surface, ensuring an aesthetically pleasing top-down composition.",
+    prompt: "Lay the product flat on a complementary surface, ensuring an aesthetically pleasing top-down composition.",
     thumbnail: require("@/assets/images/flat.png"),
   },
 ];

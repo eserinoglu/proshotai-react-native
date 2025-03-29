@@ -1,24 +1,43 @@
 import { View, Text, SafeAreaView, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import React from "react";
 import { useImageGeneration } from "@/providers/ImageGenerationProvider";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { GenerationHistory } from "@/types/generationHistory";
 import { format } from "date-fns";
 import BottomSheet from "@/components/common/BottomSheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Pencil, LoaderCircle } from "lucide-react-native";
+import { Pencil, LoaderCircle, Trash } from "lucide-react-native";
+import { deleteHistory } from "@/service/database/historyDatabase";
 
 export default function ImageDetail() {
+  // Router
+  const router = useRouter();
+  // Safe area insets
   const insets = useSafeAreaInsets();
+
+  // Image editing function import
   const { imageEditing } = useImageGeneration();
 
   const searchParams = useLocalSearchParams();
+  // Get the image data from the search params
   const { generatedImage } = searchParams;
   const image = JSON.parse(generatedImage as string) as GenerationHistory;
 
   // Edit sheet visibility and other properties
   const [isEditSheetVisible, setIsEditSheetVisible] = React.useState(false);
   const [editPrompt, setEditPrompt] = React.useState("");
+
+  // Delete sheet visibility and other properties
+  const [isDeleteSheetVisible, setIsDeleteSheetVisible] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const handleDelete = async () => {
+    if (!image) return;
+    setIsDeleting(true);
+    await deleteHistory(image);
+    setIsDeleting(false);
+    setIsDeleteSheetVisible(false);
+    router.back();
+  };
 
   // Handle image editing
   const [isEditing, setIsEditing] = React.useState(false);
@@ -33,11 +52,19 @@ export default function ImageDetail() {
   return (
     <View className="flex-1 bg-background">
       <ScrollView
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
         contentContainerClassName="flex-1 flex-col px-horizontal"
         contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
       >
-        <View className="w-full h-3/5 rounded-xl overflow-hidden bg-secondaryBg">
-          <Image source={{ uri: image?.imageUri }} style={{ width: "100%", height: "100%" }} resizeMode="contain" />
+        <TouchableOpacity
+          onPress={() => setIsDeleteSheetVisible(true)}
+          className="px-[12px] py-[6px] rounded-xl bg-secondaryBg w-[70px] flex items-center justify-center ml-auto"
+        >
+          <Text className="text-[14px] font-medium text-secondaryText">Delete</Text>
+        </TouchableOpacity>
+        <View className="w-full h-3/5 rounded-xl overflow-hidden bg-secondaryBg mt-4">
+          <Image source={{ uri: image?.imageUri }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
         </View>
         <ImageMetadata image={image} />
         <DownloadButton setIsEditSheetVisible={setIsEditSheetVisible} generatedImage={image} />
@@ -49,6 +76,12 @@ export default function ImageDetail() {
         setIsEditSheetVisible={setIsEditSheetVisible}
         handleEdit={handleEdit}
         isEditing={isEditing}
+      />
+      <DeleteBottomSheet
+        isDeleteSheetVisible={isDeleteSheetVisible}
+        setIsDeleteSheetVisible={setIsDeleteSheetVisible}
+        handleDelete={handleDelete}
+        isDeleting={isDeleting}
       />
     </View>
   );
@@ -106,7 +139,6 @@ function DownloadButton({
     </View>
   );
 }
-
 // Bottom sheet for editing
 function EditBottomSheet({
   editPrompt,
@@ -124,7 +156,7 @@ function EditBottomSheet({
   isEditing: boolean;
 }) {
   return (
-    <BottomSheet isVisible={isEditSheetVisible} setIsVisible={setIsEditSheetVisible} height={250}>
+    <BottomSheet isVisible={isEditSheetVisible} setIsVisible={setIsEditSheetVisible} height={230}>
       <View className="flex flex-col gap-4 pt-6 px-horizontal">
         <TextInput
           multiline
@@ -133,6 +165,9 @@ function EditBottomSheet({
           className="h-[150px] border border-border p-4 rounded-xl text-white bg-secondaryBg text-[16px]"
           value={editPrompt}
           onChangeText={setEditPrompt}
+          textAlignVertical="top"
+          returnKeyType="done"
+          returnKeyLabel="Done"
         />
         <View className="w-full items-center mt-auto gap-2 flex-row">
           <TouchableOpacity
@@ -150,6 +185,51 @@ function EditBottomSheet({
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setIsEditSheetVisible(false)}
+            className="bg-secondaryBg border border-border h-[50px] mb-4 rounded-xl w-[120px] items-center justify-center"
+          >
+            <Text className="text-white font-semibold text-[16px]">Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </BottomSheet>
+  );
+}
+// Delete history sheet
+function DeleteBottomSheet({
+  isDeleteSheetVisible,
+  setIsDeleteSheetVisible,
+  handleDelete,
+  isDeleting,
+}: {
+  isDeleteSheetVisible: boolean;
+  setIsDeleteSheetVisible: (isVisible: boolean) => void;
+  handleDelete: () => Promise<void>;
+  isDeleting: boolean;
+}) {
+  return (
+    <BottomSheet isVisible={isDeleteSheetVisible} setIsVisible={setIsDeleteSheetVisible} height={190}>
+      <View className="flex flex-col gap-5 pt-6 px-horizontal">
+        <Text className="text-[22px] font-semibold text-white">Delete History</Text>
+        <Text className="text-[16px] text-secondaryText">
+          Are you sure you want to delete this image? This action cannot be undone and you will not be able to restore
+          it.
+        </Text>
+        <View className="w-full items-center mt-auto gap-2 flex-row">
+          <TouchableOpacity
+            onPress={handleDelete}
+            className="bg-red-500 h-[50px] mb-4 rounded-xl flex-1 flex-row gap-2 items-center justify-center"
+          >
+            {isDeleting ? (
+              <View className="animate-spin">
+                <LoaderCircle size={18} color="#fff" />
+              </View>
+            ) : (
+              <Trash size={18} color="#fff" />
+            )}
+            <Text className="text-white font-semibold text-[16px]">{isDeleting ? "Deleting" : "Delete"}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setIsDeleteSheetVisible(false)}
             className="bg-secondaryBg border border-border h-[50px] mb-4 rounded-xl w-[120px] items-center justify-center"
           >
             <Text className="text-white font-semibold text-[16px]">Cancel</Text>

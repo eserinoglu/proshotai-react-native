@@ -19,10 +19,9 @@ export const initHistoryDatabase = () => {
 export const createHistory = async (history: GenerationHistory) => {
   try {
     db.runAsync(
-      "INSERT INTO history (imageUri, base64 ,presentationType, shotSize, backgroundType, userInput, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO history (imageUri ,presentationType, shotSize, backgroundType, userInput, createdAt) VALUES (?, ?, ?, ?, ?, ?)",
       [
         history.imageUri,
-        history.base64,
         history.presentationType,
         history.shotSize,
         history.backgroundType,
@@ -47,6 +46,18 @@ export const clearHistory = async () => {
     }
     await db.runAsync("DELETE FROM history");
     console.log("History cleared");
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deleteHistory = async (image: GenerationHistory) => {
+  try {
+    await FileSystem.deleteAsync(image.imageUri).then(async () => {
+      await db.runAsync("DELETE FROM history WHERE imageUri = ?", [image.imageUri]);
+    });
+    console.log("History deleted", image.imageUri);
   } catch (error) {
     console.error(error);
     throw error;
