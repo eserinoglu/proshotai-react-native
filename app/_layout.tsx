@@ -23,13 +23,13 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider value={DarkTheme}>
         <StatusBar style="light" />
-        <ImageGenerationProvider>
-          <HistoryDatabaseProvider>
+        <HistoryDatabaseProvider>
+          <ImageGenerationProvider>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="index" />
             </Stack>
-          </HistoryDatabaseProvider>
-        </ImageGenerationProvider>
+          </ImageGenerationProvider>
+        </HistoryDatabaseProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

@@ -1,10 +1,11 @@
-import { getHistory, clearHistory, deleteHistory } from "@/service/database/historyDatabase";
+import { getHistory, clearHistory, deleteHistory, createHistory } from "@/service/database/historyDatabase";
 import { GenerationHistory } from "@/types/generationHistory";
 import { createContext, useContext, useState } from "react";
 
 interface HistoryDatabaseContextProps {
   allHistory: GenerationHistory[];
   fetchHistory: () => Promise<void>;
+  newHistory: (image: GenerationHistory) => Promise<void>;
   deleteAllHistory: () => Promise<void>;
   deleteHistoryByImage: (image: GenerationHistory) => Promise<void>;
 }
@@ -12,6 +13,7 @@ interface HistoryDatabaseContextProps {
 export const HistoryDatabaseContext = createContext<HistoryDatabaseContextProps>({
   allHistory: [],
   fetchHistory: async () => {},
+  newHistory: async () => {},
   deleteAllHistory: async () => {},
   deleteHistoryByImage: async () => {},
 });
@@ -26,6 +28,12 @@ export const HistoryDatabaseProvider = ({ children }: HistoryDatabaseProviderPro
     const history = await getHistory();
     setAllHistory(history);
   };
+  const newHistory = async (image: GenerationHistory) => {
+    const newHistory = await createHistory(image);
+    if (newHistory) {
+      setAllHistory((prev) => [newHistory, ...prev]);
+    }
+  };
   const deleteAllHistory = async () => {
     await clearHistory();
     setAllHistory([]);
@@ -36,7 +44,9 @@ export const HistoryDatabaseProvider = ({ children }: HistoryDatabaseProviderPro
   };
 
   return (
-    <HistoryDatabaseContext.Provider value={{ allHistory, fetchHistory, deleteAllHistory, deleteHistoryByImage }}>
+    <HistoryDatabaseContext.Provider
+      value={{ allHistory, fetchHistory, newHistory, deleteAllHistory, deleteHistoryByImage }}
+    >
       {children}
     </HistoryDatabaseContext.Provider>
   );

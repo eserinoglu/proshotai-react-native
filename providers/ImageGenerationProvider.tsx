@@ -7,7 +7,7 @@ import { allPresentationTypes, PresentationType } from "@/types/presentationType
 import { allBackgroundTypes, BackgroundType } from "@/types/backgroundType";
 import { GenerationHistory } from "@/types/generationHistory";
 import { base64ToUri } from "@/utils/base64ToUri";
-import { createHistory } from "@/service/database/historyDatabase";
+import { useHistoryDatabase } from "./HistoryDatabaseProvider";
 
 interface ImageGenerationContextProps {
   // Uploaded Image
@@ -61,6 +61,7 @@ interface ImageGenerationProviderProps {
   children: React.ReactNode;
 }
 export const ImageGenerationProvider = ({ children }: ImageGenerationProviderProps) => {
+  const { newHistory } = useHistoryDatabase();
   const router = useRouter();
   const [userPrompt, setUserPrompt] = useState<string | undefined>(undefined);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -99,7 +100,7 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
           createdAt: new Date().toISOString(),
           userInput: userPrompt,
         };
-        await createHistory(generatedImage);
+        await newHistory(generatedImage);
         router.push({
           pathname: "/image-detail",
           params: {
@@ -129,7 +130,7 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
           createdAt: new Date().toISOString(),
           userInput: prompt,
         };
-        await createHistory(generatedImage);
+        await newHistory(generatedImage);
         router.push({
           pathname: "/image-detail",
           params: {

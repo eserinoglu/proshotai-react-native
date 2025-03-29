@@ -40,7 +40,7 @@ export default function History() {
             </View>
           )}
           contentContainerClassName="gap-[6px] mt-8"
-          data={allHistory}
+          data={allHistory.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())}
           keyExtractor={(item) => item.imageUri}
           ListEmptyComponent={() => <EmptyListComponent />}
           numColumns={3}

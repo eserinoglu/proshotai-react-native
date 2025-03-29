@@ -16,9 +16,9 @@ export const initHistoryDatabase = async () => {
   }
 };
 
-export const createHistory = async (history: GenerationHistory) => {
+export const createHistory = async (history: GenerationHistory): Promise<GenerationHistory | null> => {
   try {
-    db.runAsync(
+    const result = await db.runAsync(
       "INSERT INTO history (imageUri ,presentationType, shotSize, backgroundType, userInput, createdAt) VALUES (?, ?, ?, ?, ?, ?)",
       [
         history.imageUri,
@@ -29,7 +29,10 @@ export const createHistory = async (history: GenerationHistory) => {
         history.createdAt,
       ]
     );
-    console.log("History created");
+    const newHistory: GenerationHistory | null = await db.getFirstAsync(`SELECT * FROM history WHERE id = ?`, [
+      result.lastInsertRowId,
+    ]);
+    return newHistory;
   } catch (error) {
     console.error(error);
     throw error;
