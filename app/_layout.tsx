@@ -10,7 +10,7 @@ import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 
 export default function RootLayout() {
   const initializeApp = async () => {
-    initHistoryDatabase();
+    await initHistoryDatabase();
   };
 
   useEffect(() => {

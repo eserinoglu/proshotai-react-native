@@ -6,7 +6,7 @@ import { GenerationHistory } from "@/types/generationHistory";
 import { format } from "date-fns";
 import BottomSheet from "@/components/common/BottomSheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Pencil, LoaderCircle, Trash } from "lucide-react-native";
+import { Pencil, LoaderCircle, Trash, CheckCircle } from "lucide-react-native";
 import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
 
 export default function ImageDetail() {
@@ -121,17 +121,31 @@ function DownloadButton({
   generatedImage?: GenerationHistory;
 }) {
   const { saveToGallery } = useImageGeneration();
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [isSaved, setIsSaved] = React.useState(false);
   const handleSaveToGallery = async () => {
     if (!generatedImage) return;
+    setIsSaving(true);
     await saveToGallery(generatedImage.imageUri);
+    setIsSaving(false);
+    setIsSaved(true);
   };
   return (
     <View className="w-full items-center mt-auto gap-2 flex-row">
       <TouchableOpacity
+        disabled={isSaving || isSaved}
         onPress={handleSaveToGallery}
-        className="bg-tint h-[50px] mb-4 rounded-xl flex-1 items-center justify-center"
+        className="bg-tint h-[50px] mb-4 rounded-xl flex-1 items-center flex-row gap-2 justify-center"
       >
-        <Text className="text-white font-semibold text-[16px]">Download Image</Text>
+        {isSaving && (
+          <View className="animate-spin">
+            <LoaderCircle size={18} color="#fff" />
+          </View>
+        )}
+        {isSaved && <CheckCircle size={18} color="#fff" />}
+        <Text className="text-white font-semibold text-[16px]">
+          {isSaving ? "Saving" : isSaved ? "Saved" : "Download Image"}
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setIsEditSheetVisible(true)}
