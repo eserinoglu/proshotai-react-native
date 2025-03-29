@@ -4,7 +4,7 @@ import * as FileSystem from "expo-file-system";
 
 const db = SQLite.openDatabaseSync("history.db");
 
-export const initHistoryDatabase = () => {
+export const initHistoryDatabase = async () => {
   try {
     db.runAsync(
       "CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, base64 TEXT ,imageUri TEXT, presentationType TEXT, shotSize TEXT, backgroundType TEXT, userInput TEXT, createdAt TEXT)"
@@ -57,7 +57,6 @@ export const deleteHistory = async (image: GenerationHistory) => {
     await FileSystem.deleteAsync(image.imageUri).then(async () => {
       await db.runAsync("DELETE FROM history WHERE imageUri = ?", [image.imageUri]);
     });
-    console.log("History deleted", image.imageUri);
   } catch (error) {
     console.error(error);
     throw error;
@@ -67,6 +66,7 @@ export const deleteHistory = async (image: GenerationHistory) => {
 export const getHistory = async (): Promise<GenerationHistory[]> => {
   try {
     const history: GenerationHistory[] = await db.getAllAsync("SELECT * FROM history");
+    console.log("History fetched");
     return history;
   } catch (error) {
     console.error(error);

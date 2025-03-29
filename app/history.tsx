@@ -1,21 +1,20 @@
 import { View, Text, FlatList, Image, Dimensions, TouchableOpacity } from "react-native";
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getHistory } from "@/service/database/historyDatabase";
 import { GenerationHistory } from "@/types/generationHistory";
 import { ImageMinus } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { clearHistory } from "@/service/database/historyDatabase";
+import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
 
 export default function History() {
-  const [history, setHistory] = React.useState<GenerationHistory[] | []>([]);
-  const fetchHistory = async () => {
-    const history = await getHistory();
-    setHistory(history);
-  };
+  const { allHistory, fetchHistory } = useHistoryDatabase();
 
   useEffect(() => {
-    fetchHistory();
+    const fetchAllHistory = async () => {
+      await fetchHistory();
+    };
+    fetchAllHistory();
   }, []);
 
   const imageWidth = (Dimensions.get("window").width - 32) / 3 - 6;
@@ -41,7 +40,7 @@ export default function History() {
             </View>
           )}
           contentContainerClassName="gap-[6px] mt-8"
-          data={history}
+          data={allHistory}
           keyExtractor={(item) => item.imageUri}
           ListEmptyComponent={() => <EmptyListComponent />}
           numColumns={3}
@@ -67,8 +66,9 @@ function EmptyListComponent() {
 }
 
 function HistoryClearButton() {
+  const { deleteAllHistory } = useHistoryDatabase();
   return (
-    <TouchableOpacity onPress={clearHistory} className="px-[12px] py-[6px] rounded-xl bg-secondaryBg">
+    <TouchableOpacity onPress={deleteAllHistory} className="px-[12px] py-[6px] rounded-xl bg-secondaryBg">
       <Text className="text-[14px] font-medium text-secondaryText">Clear</Text>
     </TouchableOpacity>
   );

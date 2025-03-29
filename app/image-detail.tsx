@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import BottomSheet from "@/components/common/BottomSheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Pencil, LoaderCircle, Trash } from "lucide-react-native";
-import { deleteHistory } from "@/service/database/historyDatabase";
+import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
 
 export default function ImageDetail() {
   // Router
@@ -17,6 +17,9 @@ export default function ImageDetail() {
 
   // Image editing function import
   const { imageEditing } = useImageGeneration();
+
+  // History database context
+  const { deleteHistoryByImage } = useHistoryDatabase();
 
   const searchParams = useLocalSearchParams();
   // Get the image data from the search params
@@ -33,7 +36,7 @@ export default function ImageDetail() {
   const handleDelete = async () => {
     if (!image) return;
     setIsDeleting(true);
-    await deleteHistory(image);
+    await deleteHistoryByImage(image);
     setIsDeleting(false);
     setIsDeleteSheetVisible(false);
     router.back();
@@ -208,13 +211,13 @@ function DeleteBottomSheet({
 }) {
   return (
     <BottomSheet isVisible={isDeleteSheetVisible} setIsVisible={setIsDeleteSheetVisible} height={190}>
-      <View className="flex flex-col gap-5 pt-6 px-horizontal">
+      <View className="flex flex-col gap-4 pt-6 px-horizontal">
         <Text className="text-[22px] font-semibold text-white">Delete History</Text>
-        <Text className="text-[16px] text-secondaryText">
+        <Text className="text-[15px] text-secondaryText">
           Are you sure you want to delete this image? This action cannot be undone and you will not be able to restore
           it.
         </Text>
-        <View className="w-full items-center mt-auto gap-2 flex-row">
+        <View className="w-full items-center mt-2 gap-2 flex-row">
           <TouchableOpacity
             onPress={handleDelete}
             className="bg-red-500 h-[50px] mb-4 rounded-xl flex-1 flex-row gap-2 items-center justify-center"

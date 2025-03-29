@@ -5,12 +5,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { initHistoryDatabase } from "@/service/database/historyDatabase";
 import { useEffect } from "react";
-
-const initializeApp = async () => {
-  initHistoryDatabase();
-};
+import { HistoryDatabaseProvider } from "@/providers/HistoryDatabaseProvider";
+import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 
 export default function RootLayout() {
+  const initializeApp = async () => {
+    initHistoryDatabase();
+  };
+
   useEffect(() => {
     const init = async () => {
       await initializeApp();
@@ -19,12 +21,16 @@ export default function RootLayout() {
   }, []);
   return (
     <SafeAreaProvider>
-      <StatusBar style="light" />
-      <ImageGenerationProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-        </Stack>
-      </ImageGenerationProvider>
+      <ThemeProvider value={DarkTheme}>
+        <StatusBar style="light" />
+        <ImageGenerationProvider>
+          <HistoryDatabaseProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+            </Stack>
+          </HistoryDatabaseProvider>
+        </ImageGenerationProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
