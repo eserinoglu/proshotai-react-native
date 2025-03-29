@@ -4,7 +4,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { GenerationHistory } from "@/types/generationHistory";
 import { ImageMinus } from "lucide-react-native";
 import { useRouter } from "expo-router";
-import { clearHistory } from "@/service/database/historyDatabase";
 import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
 
 export default function History() {
@@ -40,7 +39,7 @@ export default function History() {
             </View>
           )}
           contentContainerClassName="gap-[6px] mt-8"
-          data={allHistory.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())}
+          data={allHistory}
           keyExtractor={(item) => item.imageUri}
           ListEmptyComponent={() => <EmptyListComponent />}
           numColumns={3}

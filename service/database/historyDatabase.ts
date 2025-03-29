@@ -6,7 +6,7 @@ const db = SQLite.openDatabaseSync("history.db");
 
 export const initHistoryDatabase = async () => {
   try {
-    db.runAsync(
+    await db.runAsync(
       "CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, base64 TEXT ,imageUri TEXT, presentationType TEXT, shotSize TEXT, backgroundType TEXT, userInput TEXT, createdAt TEXT)"
     );
     console.log("Database initialized");
@@ -43,9 +43,7 @@ export const clearHistory = async () => {
   try {
     const history: GenerationHistory[] = await db.getAllAsync("SELECT * FROM history");
     for (const item of history) {
-      if (item.imageUri) {
-        await FileSystem.deleteAsync(item.imageUri);
-      }
+      await FileSystem.deleteAsync(item.imageUri);
     }
     await db.runAsync("DELETE FROM history");
     console.log("History cleared");
@@ -68,7 +66,7 @@ export const deleteHistory = async (image: GenerationHistory) => {
 
 export const getHistory = async (): Promise<GenerationHistory[]> => {
   try {
-    const history: GenerationHistory[] = await db.getAllAsync("SELECT * FROM history");
+    const history: GenerationHistory[] = await db.getAllAsync("SELECT * FROM history ORDER BY createdAt DESC");
     console.log("History fetched");
     return history;
   } catch (error) {

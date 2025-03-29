@@ -23,21 +23,30 @@ interface HistoryDatabaseProviderProps {
 }
 
 export const HistoryDatabaseProvider = ({ children }: HistoryDatabaseProviderProps) => {
+  // State to hold all history
   const [allHistory, setAllHistory] = useState<GenerationHistory[]>([]);
+  // Functions to interact with the history database
+  // Fetch all history from the database
   const fetchHistory = async () => {
     const history = await getHistory();
     setAllHistory(history);
   };
+  // Add a new history entry to the database
+  // This function is called when a new image is generated
   const newHistory = async (image: GenerationHistory) => {
     const newHistory = await createHistory(image);
     if (newHistory) {
       setAllHistory((prev) => [newHistory, ...prev]);
     }
   };
+  // Delete all history from the database
+  // This function is called when the user wants to clear all history
   const deleteAllHistory = async () => {
     await clearHistory();
     setAllHistory([]);
   };
+  // Delete a specific history entry from the database
+  // This function is called when the user wants to delete a specific image
   const deleteHistoryByImage = async (image: GenerationHistory) => {
     await deleteHistory(image);
     setAllHistory((prev) => prev.filter((item) => item.imageUri !== image.imageUri));

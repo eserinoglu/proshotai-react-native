@@ -20,8 +20,8 @@ export default function RootLayout() {
     init();
   }, []);
   return (
-    <SafeAreaProvider>
-      <ThemeProvider value={DarkTheme}>
+    <ThemeProvider value={DarkTheme}>
+      <SafeAreaProvider>
         <StatusBar style="light" />
         <HistoryDatabaseProvider>
           <ImageGenerationProvider>
@@ -30,7 +30,7 @@ export default function RootLayout() {
             </Stack>
           </ImageGenerationProvider>
         </HistoryDatabaseProvider>
-      </ThemeProvider>
-    </SafeAreaProvider>
+      </SafeAreaProvider>
+    </ThemeProvider>
   );
 }

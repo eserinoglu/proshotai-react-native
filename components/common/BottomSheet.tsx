@@ -20,9 +20,7 @@ export default function BottomSheet({
   const containerStyle = useAnimatedStyle(() => {
     return {
       pointerEvents: isVisible ? "auto" : "none",
-      backgroundColor: withTiming(keyboard.state.get() === KeyboardState.OPEN ? "rgba(0, 0, 0, 0.3)" : "transparent", {
-        duration: 150,
-      }),
+      zIndex: 5,
     };
   });
   const sheetStyle = useAnimatedStyle(() => {
@@ -31,15 +29,16 @@ export default function BottomSheet({
       transform: [{ translateY: withTiming(isVisible ? 0 : sheetHeight) }],
       height: sheetHeight - -keyboard.height.value,
       paddingBottom: insets.bottom,
+      zIndex: 100,
     };
   });
   return (
     <Animated.View
       onTouchStart={(e) => e.target === e.currentTarget && Keyboard.dismiss()}
       style={[containerStyle]}
-      className="absolute top-0 right-0 left-0 bottom-0 flex items-end justify-end w-full h-full z-10"
+      className="absolute top-0 right-0 left-0 bottom-0 flex items-center justify-end"
     >
-      <Animated.View style={[sheetStyle]} className="bg-neutral-800 rounded-t-xl flex flex-col z-20">
+      <Animated.View style={[sheetStyle]} className="bg-neutral-800 rounded-t-xl">
         {children}
       </Animated.View>
     </Animated.View>

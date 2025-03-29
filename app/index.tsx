@@ -15,6 +15,7 @@ export default function Home() {
     <View className="flex-1 bg-background">
       <SafeAreaView edges={["top", "right", "left"]} className="flex-1">
         <ScrollView
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
           className="flex-1"
           contentContainerClassName="pt-5 gap-8"
@@ -40,10 +41,7 @@ function Header() {
         <Coins size={20} color="#FF9900" />
         <Text className="text-white font-medium">5 CREDITS</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => router.push("/history")}
-        className="rect flex flex-row items-center gap-2"
-      >
+      <TouchableOpacity onPress={() => router.push("/history")} className="rect flex flex-row items-center gap-2">
         <History size={20} color="#787878" />
         <Text className="font-medium text-secondaryText">History</Text>
       </TouchableOpacity>
@@ -69,17 +67,11 @@ function UploadImage() {
         className="w-full aspect-[3/4] rounded-2xl border overflow-hidden border-border bg-secondaryBg flex items-center justify-center gap-3"
       >
         {uploadedImage ? (
-          <Image
-            source={{ uri: uploadedImage }}
-            style={{ width: "100%", height: "100%" }}
-            resizeMode="contain"
-          />
+          <Image source={{ uri: uploadedImage }} style={{ width: "100%", height: "100%" }} resizeMode="contain" />
         ) : (
           <View className="flex flex-col gap-3 items-center">
             <ImagePlus size={72} color="#787878" strokeWidth={1.2} />
-            <Text className="text-[20px] font-semibold text-secondaryText">
-              Upload product photo
-            </Text>
+            <Text className="text-[20px] font-semibold text-secondaryText">Upload product photo</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -228,9 +220,7 @@ function GenerateButton() {
         ) : (
           <WandSparkles size={20} color="white" />
         )}
-        <Text className="text-white font-semibold text-[16px]">
-          {isGenerating ? "Generating" : "Generate"}
-        </Text>
+        <Text className="text-white font-semibold text-[16px]">{isGenerating ? "Generating" : "Generate"}</Text>
       </TouchableOpacity>
     </View>
   );

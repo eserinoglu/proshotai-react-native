@@ -90,6 +90,7 @@ export default function ImageDetail() {
   );
 }
 
+// Metadata component
 function ImageMetadata({ image }: { image: GenerationHistory }) {
   const metadata = [image.presentationType, image.shotSize, image.backgroundType];
   return (
@@ -113,6 +114,7 @@ function ImageMetadata({ image }: { image: GenerationHistory }) {
     </View>
   );
 }
+// Download button component
 function DownloadButton({
   setIsEditSheetVisible,
   generatedImage,
@@ -173,12 +175,13 @@ function EditBottomSheet({
   isEditing: boolean;
 }) {
   return (
-    <BottomSheet isVisible={isEditSheetVisible} setIsVisible={setIsEditSheetVisible} height={230}>
+    <BottomSheet isVisible={isEditSheetVisible} setIsVisible={setIsEditSheetVisible} height={280}>
       <View className="flex flex-col gap-4 pt-6 px-horizontal">
+        <Text className="text-[22px] font-semibold text-white">Edit Image</Text>
         <TextInput
           multiline
           placeholderTextColor={"#787878"}
-          placeholder="Edit the image"
+          placeholder="Enter your prompt here."
           className="h-[150px] border border-border p-4 rounded-xl text-white bg-secondaryBg text-[16px]"
           value={editPrompt}
           onChangeText={setEditPrompt}
