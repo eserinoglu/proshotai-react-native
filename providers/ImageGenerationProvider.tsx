@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { generateImage } from "@/service/imageGeneration";
+import { editImage, generateImage } from "@/service/imageGeneration";
 import { useRouter } from "expo-router";
 import { exportToGallery } from "@/service/imageSave";
 import { allShotSizes, ShotSize } from "@/types/shotSize";
@@ -15,6 +15,8 @@ interface ImageGenerationContextProps {
   setUploadedImage: (image: string | null) => void;
   // Image generation function
   imageGeneration: (imageBase64: string) => Promise<void>;
+  // Image editing with prompt
+  imageEditing: (imageBase64: string, prompt: string) => Promise<void>;
   // Shot size
   selectedShotSize: ShotSize;
   setSelectedShotSize: (size: ShotSize) => void;
@@ -29,7 +31,6 @@ interface ImageGenerationContextProps {
   setUserPrompt: (prompt: string | undefined) => void;
   // Save to gallery function
   saveToGallery: (imageBase64: string) => Promise<void>;
-  generatedImage: GenerationHistory | null;
 }
 
 export const ImageGenerationContext = createContext<ImageGenerationContextProps>({
@@ -38,6 +39,8 @@ export const ImageGenerationContext = createContext<ImageGenerationContextProps>
   setUploadedImage: () => {},
   // Image generation funciton
   imageGeneration: async () => {},
+  // Image editing with prompt
+  imageEditing: async () => {},
   // Shot size
   selectedShotSize: allShotSizes[0],
   setSelectedShotSize: () => {},
@@ -52,7 +55,6 @@ export const ImageGenerationContext = createContext<ImageGenerationContextProps>
   setUserPrompt: () => {},
   // Save to gallery function
   saveToGallery: async () => {},
-  generatedImage: null,
 });
 
 interface ImageGenerationProviderProps {
@@ -62,14 +64,9 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
   const router = useRouter();
   const [userPrompt, setUserPrompt] = useState<string | undefined>(undefined);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [generatedImage, setGeneratedImage] = useState<GenerationHistory | null>(null);
   const [selectedShotSize, setSelectedShotSize] = useState<ShotSize>(allShotSizes[0]);
-  const [selectedPresentationType, setSelectedPresentationType] = useState<PresentationType>(
-    allPresentationTypes[0]
-  );
-  const [selectedBackgroundType, setSelectedBackgroundType] = useState<BackgroundType>(
-    allBackgroundTypes[0]
-  );
+  const [selectedPresentationType, setSelectedPresentationType] = useState<PresentationType>(allPresentationTypes[0]);
+  const [selectedBackgroundType, setSelectedBackgroundType] = useState<BackgroundType>(allBackgroundTypes[0]);
 
   const saveToGallery = async (imageBase64: string) => {
     try {
@@ -80,13 +77,13 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
     }
   };
 
-  const imageGeneration = async (imageBase64: string) => {
-    if (!imageBase64) {
+  const imageGeneration = async (imageUri: string) => {
+    if (!imageUri) {
       throw new Error("No image uploaded");
     }
     try {
       const result = await generateImage(
-        imageBase64,
+        imageUri,
         selectedShotSize.prompt,
         selectedPresentationType.prompt,
         selectedBackgroundType.prompt,
@@ -102,7 +99,36 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
           createdAt: new Date().toISOString(),
           userInput: userPrompt,
         };
-        setGeneratedImage(generatedImage);
+        await createHistory(generatedImage);
+        router.push({
+          pathname: "/image-detail",
+          params: {
+            generatedImage: JSON.stringify(generatedImage),
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error while editing image. Image generation Provider.", error);
+      throw new Error("Error while editing image. Image generation Provider.");
+    }
+  };
+
+  const imageEditing = async (imageUri: string, prompt: string) => {
+    if (!imageUri) {
+      throw new Error("No image uploaded");
+    }
+    try {
+      const result = await editImage(imageUri, prompt);
+      if (result) {
+        const uri = await base64ToUri(result);
+        const generatedImage: GenerationHistory = {
+          imageUri: uri,
+          shotSize: selectedShotSize.type,
+          presentationType: selectedPresentationType.type,
+          backgroundType: selectedBackgroundType.type,
+          createdAt: new Date().toISOString(),
+          userInput: prompt,
+        };
         await createHistory(generatedImage);
         router.push({
           pathname: "/image-detail",
@@ -125,6 +151,7 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
         uploadedImage,
         setUploadedImage,
         imageGeneration,
+        imageEditing,
         selectedShotSize,
         setSelectedShotSize,
         selectedPresentationType,
@@ -132,7 +159,6 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
         selectedBackgroundType,
         setSelectedBackgroundType,
         saveToGallery,
-        generatedImage,
       }}
     >
       {children}

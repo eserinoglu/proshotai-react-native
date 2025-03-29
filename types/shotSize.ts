@@ -14,13 +14,13 @@ export const allShotSizes: ShotSize[] = [
   {
     type: "Mid-Shot",
     prompt:
-      "Frame the product from a medium distance, providing a balanced view of its design and overall shape.",
+      "Frame the product from a medium distance, providing a balanced view of its design, overall shape and ambient.",
     thumbnail: require("@/assets/images/mid.png"),
   },
   {
     type: "Full Shot",
     prompt:
-      "Show the entire product from a distance, ensuring the full structure is visible in a well-composed frame. If the product is worn or used, show it in context.",
+      "Show the entire scene from a distance, ensuring the full structure is visible in a well-composed frame. If the product is worn or used, show it in context.",
     thumbnail: require("@/assets/images/full.png"),
   },
 ];

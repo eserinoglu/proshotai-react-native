@@ -56,11 +56,10 @@ function UploadImage() {
   const uploadImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       quality: 0.2,
-      base64: true,
       mediaTypes: ["images"],
     });
     if (!result.canceled) {
-      setUploadedImage(result.assets[0].base64!);
+      setUploadedImage(result.assets[0].uri);
     }
   };
   return (
@@ -71,7 +70,7 @@ function UploadImage() {
       >
         {uploadedImage ? (
           <Image
-            source={{ uri: `data:image/png;base64,${uploadedImage}` }}
+            source={{ uri: uploadedImage }}
             style={{ width: "100%", height: "100%" }}
             resizeMode="contain"
           />
