@@ -100,10 +100,16 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
           presentationType: selectedPresentationType.type,
           backgroundType: selectedBackgroundType.type,
           createdAt: new Date().toISOString(),
+          userInput: userPrompt,
         };
         setGeneratedImage(generatedImage);
         await createHistory(generatedImage);
-        router.push("/generated-image");
+        router.push({
+          pathname: "/image-detail",
+          params: {
+            generatedImage: JSON.stringify(generatedImage),
+          },
+        });
       }
     } catch (error) {
       console.error("Error while editing image. Image generation Provider.", error);
