@@ -107,7 +107,7 @@ function ImagePreview({
     .numberOfTaps(2)
     .onEnd(() => {
       if (scale.value === 1) {
-        scale.value = withTiming(2);
+        scale.value = withTiming(2.5);
       } else {
         scale.value = withTiming(1);
       }

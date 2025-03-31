@@ -1,4 +1,13 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, FlatList, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  TextInput,
+  KeyboardAvoidingView,
+} from "react-native";
 import React from "react";
 import { Coins, History, ImagePlus, WandSparkles, LoaderCircle } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -8,28 +17,31 @@ import { allBackgroundTypes } from "@/types/backgroundType";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useImageGeneration } from "@/providers/ImageGenerationProvider";
 import { useRouter } from "expo-router";
+import { useAnimatedKeyboard } from "react-native-reanimated";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
+  const keyboard = useAnimatedKeyboard();
   return (
-    <View className="flex-1 bg-background">
-      <SafeAreaView edges={["top", "right", "left"]} className="flex-1">
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
-          className="flex-1"
-          contentContainerClassName="pt-5 gap-8"
-        >
-          <Header />
-          <UploadImage />
-          <PresentationTypeSelection />
-          <ShotSizeSelection />
-          <BackgroundTypeSelection />
-          <UserInput />
-          <GenerateButton />
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+    <SafeAreaView edges={["top", "right", "left"]} className="flex-1">
+      <ScrollView
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="interactive"
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 10 }}
+        className="flex-1"
+        contentContainerClassName="pt-5 gap-8"
+      >
+        <Header />
+        <UploadImage />
+        <PresentationTypeSelection />
+        <ShotSizeSelection />
+        <BackgroundTypeSelection />
+        <UserInput />
+        <GenerateButton />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

@@ -96,7 +96,7 @@ export const editImage = async (imageUri: string, editPrompt: string): Promise<s
       }
     }
   } catch (error) {
-    console.error("Error while editing image. Image generation service.", error);
+    console.log("🧨❌ IMAGE EDIT ERROR", error);
     throw new Error("Error while editing image. Image generation service.");
   }
 };

@@ -30,7 +30,7 @@ export default function History() {
 
   return (
     <View className="flex-1 px-horizontal bg-background">
-      <SafeAreaView className="flex-1 flex-col gap-5">
+      <SafeAreaView edges={["top", "left", "right"]} className="flex-1 flex-col gap-5">
         <FlatList
           ListHeaderComponent={() => (
             <View className="w-full flex flex-row items-center justify-between mb-4">
@@ -38,7 +38,7 @@ export default function History() {
               <HistoryClearButton />
             </View>
           )}
-          contentContainerClassName="gap-[6px] mt-8"
+          contentContainerClassName="gap-[6px] mt-8 pb-10"
           data={allHistory}
           keyExtractor={(item) => item.imageUri}
           ListEmptyComponent={() => <EmptyListComponent />}
