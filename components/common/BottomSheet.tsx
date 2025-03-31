@@ -1,5 +1,5 @@
 import { Keyboard } from "react-native";
-import Animated, { KeyboardState, useAnimatedKeyboard, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedKeyboard, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function BottomSheet({
@@ -27,7 +27,7 @@ export default function BottomSheet({
     return {
       width: "100%",
       transform: [{ translateY: withTiming(isVisible ? 0 : sheetHeight) }],
-      height: sheetHeight - -keyboard.height.value,
+      height: sheetHeight + keyboard.height.value,
       paddingBottom: insets.bottom,
       zIndex: 100,
     };

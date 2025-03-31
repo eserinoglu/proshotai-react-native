@@ -7,6 +7,7 @@ import { initHistoryDatabase } from "@/service/database/historyDatabase";
 import { useEffect } from "react";
 import { HistoryDatabaseProvider } from "@/providers/HistoryDatabaseProvider";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // TODO : Add a splash screen
 // TODO : Integrate RevenueCat for credit management and tracking
@@ -25,16 +26,18 @@ export default function RootLayout() {
   }, []);
   return (
     <ThemeProvider value={DarkTheme}>
-      <SafeAreaProvider>
-        <StatusBar style="light" />
-        <HistoryDatabaseProvider>
-          <ImageGenerationProvider>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-            </Stack>
-          </ImageGenerationProvider>
-        </HistoryDatabaseProvider>
-      </SafeAreaProvider>
+      <GestureHandlerRootView className="flex-1">
+        <SafeAreaProvider>
+          <StatusBar style="auto" />
+          <HistoryDatabaseProvider>
+            <ImageGenerationProvider>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+              </Stack>
+            </ImageGenerationProvider>
+          </HistoryDatabaseProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }

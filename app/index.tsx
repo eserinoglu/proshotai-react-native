@@ -202,9 +202,14 @@ function GenerateButton() {
   const [isGenerating, setIsGenerating] = React.useState(false);
   const handleImageGeneration = async () => {
     setIsGenerating(true);
-    if (!uploadedImage) return;
-    await imageGeneration(uploadedImage);
-    setIsGenerating(false);
+    try {
+      if (!uploadedImage) return;
+      await imageGeneration(uploadedImage);
+    } catch (error) {
+      console.error("Error generating image:", error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
   return (
     <View className="w-full px-horizontal">

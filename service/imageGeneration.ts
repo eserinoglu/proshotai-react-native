@@ -15,7 +15,6 @@ export const generateImage = async (
     throw new Error("No image uploaded");
   }
   // Prompt for the image generation model
-  // generateImage fonksiyonu içindeki basePrompt'u bununla değiştirebilirsiniz:
   let basePrompt = `
 Generate a high-resolution, photorealistic product photograph suitable for e-commerce and advertising. The primary subject is the provided product image. Focus on sharp details, accurate color representation, realistic material textures, and natural, flattering lighting that includes soft shadows and subtle highlights to define the product's form. Ensure a visually appealing and balanced composition. The overall aesthetic must be professional, clean, and high-quality. Specific details regarding presentation, shot angle, and background will follow. Avoid generating text or logos unless specifically requested. ${presentationTypePrompt} ${backgroundTypePrompt} ${shotSizePrompt}
 `;

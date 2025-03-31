@@ -1,5 +1,4 @@
 import * as MediaLibrary from "expo-media-library";
-import * as FileSystem from "expo-file-system";
 
 export const exportToGallery = async (imageUri: string) => {
   try {

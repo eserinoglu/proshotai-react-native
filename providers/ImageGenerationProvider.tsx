@@ -14,9 +14,9 @@ interface ImageGenerationContextProps {
   uploadedImage: string | null;
   setUploadedImage: (image: string | null) => void;
   // Image generation function
-  imageGeneration: (imageBase64: string) => Promise<void>;
+  imageGeneration: (imageUri: string) => Promise<void>;
   // Image editing with prompt
-  imageEditing: (imageBase64: string, prompt: string) => Promise<void>;
+  imageEditing: (imageUri: string, prompt: string) => Promise<void>;
   // Shot size
   selectedShotSize: ShotSize;
   setSelectedShotSize: (size: ShotSize) => void;
@@ -30,7 +30,7 @@ interface ImageGenerationContextProps {
   userPrompt: string | undefined;
   setUserPrompt: (prompt: string | undefined) => void;
   // Save to gallery function
-  saveToGallery: (imageBase64: string) => Promise<void>;
+  saveToGallery: (imageUri: string) => Promise<void>;
 }
 
 export const ImageGenerationContext = createContext<ImageGenerationContextProps>({
