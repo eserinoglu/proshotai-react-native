@@ -15,8 +15,10 @@ export const generateImage = async (
     throw new Error("No image uploaded");
   }
   // Prompt for the image generation model
+  // generateImage fonksiyonu içindeki basePrompt'u bununla değiştirebilirsiniz:
   let basePrompt = `
-  Generate a high-quality, professional product image with realistic lighting, sharp details, and a visually appealing composition for advertising photography. The product should be well-lit, with natural shadows and highlights enhancing its form. Ensure the background complements the product without distracting from it. The image should be photorealistic, suitable for commercial use, and free from artifacts or distortions. ${shotSizePrompt} ${presentationTypePrompt} ${backgroundTypePrompt}`;
+Generate a high-resolution, photorealistic product photograph suitable for e-commerce and advertising. The primary subject is the provided product image. Focus on sharp details, accurate color representation, realistic material textures, and natural, flattering lighting that includes soft shadows and subtle highlights to define the product's form. Ensure a visually appealing and balanced composition. The overall aesthetic must be professional, clean, and high-quality. Specific details regarding presentation, shot angle, and background will follow. Avoid generating text or logos unless specifically requested. ${presentationTypePrompt} ${backgroundTypePrompt} ${shotSizePrompt}
+`;
 
   if (userPrompt && userPrompt.trim() !== "") {
     basePrompt += ` Additionally, consider the following user request: "${userPrompt}"`;

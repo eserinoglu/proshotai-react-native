@@ -8,6 +8,10 @@ import { useEffect } from "react";
 import { HistoryDatabaseProvider } from "@/providers/HistoryDatabaseProvider";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 
+// TODO : Add a splash screen
+// TODO : Integrate RevenueCat for credit management and tracking
+// TODO : Add image preview modal with zooming, swiping and pan to dismiss functionality
+
 export default function RootLayout() {
   const initializeApp = async () => {
     await initHistoryDatabase();
