@@ -20,7 +20,7 @@ export const allBackgroundTypes: BackgroundType[] = [
   {
     type: "Indoor",
     prompt:
-      "Position the product realistically within an appropriate indoor setting (e.g., modern home interior, cozy living room, minimalist office, stylish cafe). Use natural window light or soft, ambient artificial lighting suitable for the environment. The background should provide context or enhance lifestyle appeal without clutter or distraction.",
+      "Position the product realistically within an appropriate indoor setting (e.g., modern home interior, cozy living room, minimalist office, stylish cafe) which is related with the product. Use natural window light or soft, ambient artificial lighting suitable for the environment. The background should provide context or enhance lifestyle appeal without clutter or distraction.",
     thumbnail: require("@/assets/images/indoor.png"),
   },
 ];

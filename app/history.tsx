@@ -1,10 +1,10 @@
 import { View, Text, FlatList, Image, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useEffect } from "react";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { GenerationHistory } from "@/types/generationHistory";
 import { ImageMinus, X } from "lucide-react-native";
 import { useRouter } from "expo-router";
-import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
+import { useHistoryDatabase } from "@/stores/useHistoryDatabase";
 import BottomSheet from "@/components/BottomSheet";
 
 export default function History() {
@@ -19,7 +19,7 @@ export default function History() {
     fetchAllHistory();
   }, []);
 
-  const imageWidth = (Dimensions.get("window").width) / 4 - 2
+  const imageWidth = Dimensions.get("window").width / 3 - 2;
 
   const router = useRouter();
   const navigateToDetail = (generationHistory: GenerationHistory) => {
@@ -48,7 +48,7 @@ export default function History() {
         data={allHistory}
         keyExtractor={(item) => item.imageUri}
         ListEmptyComponent={() => <EmptyListComponent />}
-        numColumns={4}
+        numColumns={3}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigateToDetail(item)}>
             <Image source={{ uri: item.imageUri }} style={{ width: imageWidth, aspectRatio: 1, borderRadius: 0 }} />

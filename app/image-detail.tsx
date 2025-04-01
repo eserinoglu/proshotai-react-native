@@ -3,23 +3,19 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { GenerationHistory } from "@/types/generationHistory";
 import { Gesture, GestureDetector, TextInput } from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  useWorkletCallback,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArrowLeft, CheckCircle, Download, Pencil, Trash, X } from "lucide-react-native";
 import BottomSheet from "@/components/BottomSheet";
-import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
-import { useImageGeneration } from "@/providers/ImageGenerationProvider";
+import { useHistoryDatabase } from "@/stores/useHistoryDatabase";
+import { useImageGeneration } from "@/stores/useImageGeneration";
 import { exportToGallery } from "@/service/imageSave";
 
 export default function ImageDetail() {
   const searchParams = useLocalSearchParams();
   const image = JSON.parse(searchParams.generatedImage as string) as GenerationHistory;
+
+  const router = useRouter();
 
   // History database hook
   const { deleteHistoryByImage } = useHistoryDatabase();
@@ -33,7 +29,12 @@ export default function ImageDetail() {
   const [editPrompt, setEditPrompt] = React.useState("");
   const [isEditSheetVisible, setIsEditSheetVisible] = React.useState(false);
   const handleEdit = async () => {
-    await imageEditing(image.imageUri, editPrompt);
+    const generated = await imageEditing(image.imageUri, editPrompt);
+    setIsEditSheetVisible(false);
+    router.push({
+      pathname: "/image-detail",
+      params: { generatedImage: JSON.stringify(generated) },
+    });
   };
 
   // Delete sheet visibility and other delete options

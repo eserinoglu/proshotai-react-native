@@ -6,9 +6,9 @@ import { allPresentationTypes } from "@/types/presentationType";
 import { allShotSizes } from "@/types/shotSize";
 import { allBackgroundTypes } from "@/types/backgroundType";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { useImageGeneration } from "@/providers/ImageGenerationProvider";
+import { useImageGeneration } from "@/stores/useImageGeneration";
 import { useRouter } from "expo-router";
-import { useSupabase } from "@/providers/SupabaseProvide";
+import { useSupabase } from "@/stores/useSupabase";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -56,7 +56,7 @@ function UploadImage() {
   const { uploadedImage, setUploadedImage } = useImageGeneration();
   const uploadImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      quality: 0.2,
+      quality: 0.4,
       mediaTypes: ["images"],
     });
     if (!result.canceled) {
@@ -203,11 +203,20 @@ function UserInput() {
 function GenerateButton() {
   const { imageGeneration, uploadedImage } = useImageGeneration();
   const [isGenerating, setIsGenerating] = React.useState(false);
+  const router = useRouter();
   const handleImageGeneration = async () => {
     setIsGenerating(true);
     try {
       if (!uploadedImage) return;
-      await imageGeneration(uploadedImage);
+      const image = await imageGeneration(uploadedImage);
+      if (image) {
+        router.push({
+          pathname: "/image-detail",
+          params: {
+            generatedImage: JSON.stringify(image),
+          },
+        });
+      }
     } catch (error) {
       console.error("Error generating image:", error);
     } finally {

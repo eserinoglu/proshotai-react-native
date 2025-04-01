@@ -1,4 +1,4 @@
-import Purchases, { LOG_LEVEL } from "react-native-purchases";
+import Purchases, { LOG_LEVEL, PACKAGE_TYPE, PurchasesPackage } from "react-native-purchases";
 import { Platform } from "react-native";
 
 const iosKey = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY;
@@ -19,3 +19,7 @@ export const initRevenueCat = async () => {
   }
 };
 
+
+export const purchaseCredit = async (pkg: PurchasesPackage) => {
+  await Purchases.purchasePackage(pkg);
+};

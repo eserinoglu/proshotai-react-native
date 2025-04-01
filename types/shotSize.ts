@@ -20,7 +20,7 @@ export const allShotSizes: ShotSize[] = [
   {
     type: "Full Shot",
     prompt:
-      "Capture the entire product within the frame, showing its full form and scale. If on a model, show the full figure. Include relevant surrounding context or environment as defined by the background prompt, ensuring the product remains prominent and well-composed within the scene.",
+      "Capture the entire product within the frame, showing its full form and scale. Wide angle. If on a model, show the full figure. Include relevant surrounding context or environment as defined by the background prompt, ensuring the product remains prominent and well-composed within the scene.",
     thumbnail: require("@/assets/images/full.png"),
   },
 ];

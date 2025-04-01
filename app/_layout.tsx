@@ -1,25 +1,25 @@
 import { Stack } from "expo-router";
 import "@/global.css";
-import { ImageGenerationProvider } from "@/providers/ImageGenerationProvider";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { initHistoryDatabase } from "@/service/database/historyDatabase";
 import { useEffect, useState } from "react";
-import { HistoryDatabaseProvider } from "@/providers/HistoryDatabaseProvider";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
-import { SupabaseProvider } from "@/providers/SupabaseProvide";
 import { initRevenueCat } from "@/service/RevenueCat";
+import { useSupabase } from "@/stores/useSupabase";
 
 /// Disable the splash screen auto hide
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { checkUser } = useSupabase();
   const [isAppReady, setIsAppReady] = useState(false);
 
   const initializeApp = async () => {
     await initHistoryDatabase();
+    await checkUser();
     await initRevenueCat();
     setIsAppReady(true);
   };
@@ -44,18 +44,12 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={DarkTheme}>
       <GestureHandlerRootView className="flex-1">
-        <SupabaseProvider>
-          <SafeAreaProvider>
-            <StatusBar style="auto" />
-            <HistoryDatabaseProvider>
-              <ImageGenerationProvider>
-                <Stack screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="index" />
-                </Stack>
-              </ImageGenerationProvider>
-            </HistoryDatabaseProvider>
-          </SafeAreaProvider>
-        </SupabaseProvider>
+        <SafeAreaProvider>
+          <StatusBar style="auto" />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+          </Stack>
+        </SafeAreaProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
   );
