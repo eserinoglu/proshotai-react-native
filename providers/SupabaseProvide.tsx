@@ -1,7 +1,8 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
-import uuid from "react-native-uuid"
+import uuid from "react-native-uuid";
 import * as SecureStore from "expo-secure-store";
+import Purchases from "react-native-purchases";
 
 export interface User {
   id?: string;
@@ -22,6 +23,7 @@ export const SupabaseContext = createContext<SupabaseContextType | null>(null);
 export const SupabaseProvider = ({ children }: { children: React.ReactNode }) => {
   const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_API_KEY;
+
   if (!supabaseUrl || !supabaseKey) {
     throw new Error("Supabase URL or Key is not defined");
   }
@@ -35,6 +37,7 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
     check();
   }, []);
 
+  // Add credits to user
   const addCredits = async (amount: number) => {
     if (!user) return;
     try {
@@ -52,6 +55,7 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
     }
   };
 
+  // Remove credits from user
   const removeCredits = async (amount: number) => {
     if (!user) return;
     try {
@@ -59,6 +63,16 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
         .from("users")
         .update({ remaining_credits: user.remaining_credits - amount })
         .eq("id", user.id);
+
+      setUser((prevUser) => {
+        if (prevUser) {
+          return {
+            ...prevUser,
+            remaining_credits: prevUser.remaining_credits - amount,
+          };
+        }
+        return prevUser;
+      });
       if (error) {
         console.error("Error removing credits from user:", error);
         throw new Error("Error removing credits from user");
@@ -69,12 +83,12 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
     }
   };
 
-  // If user id exists in secure store, get it
+  // If user id exists in secure store, get it, otherwise create a new one
   const getUserId = async (): Promise<string> => {
     try {
       let userId = await SecureStore.getItemAsync("userId");
       if (!userId) {
-        userId = uuid.v4()
+        userId = uuid.v4();
         await SecureStore.setItemAsync("userId", userId);
       }
       return userId;
@@ -84,12 +98,17 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
     }
   };
 
+  // Check if user exists in the database, if not create a new user
+  // If user exists, set the user state
+  // If user does not exist, create a new user with 5 credits
+  // and set the user state
   const checkUser = async () => {
     const userId = await getUserId();
     try {
       const { data, error } = await supabase.from("users").select("*").eq("id", userId).single();
       if (data) {
         setUser(data);
+        Purchases.logIn(userId);
       } else {
         // Create a new user if not found
         const { data, error } = await supabase

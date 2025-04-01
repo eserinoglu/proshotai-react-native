@@ -8,6 +8,7 @@ import { allBackgroundTypes, BackgroundType } from "@/types/backgroundType";
 import { GenerationHistory } from "@/types/generationHistory";
 import { base64ToUri } from "@/utils/base64ToUri";
 import { useHistoryDatabase } from "./HistoryDatabaseProvider";
+import { useSupabase } from "./SupabaseProvide";
 
 interface ImageGenerationContextProps {
   // Uploaded Image
@@ -62,6 +63,8 @@ interface ImageGenerationProviderProps {
 }
 export const ImageGenerationProvider = ({ children }: ImageGenerationProviderProps) => {
   const { newHistory } = useHistoryDatabase();
+  const { user, removeCredits } = useSupabase();
+
   const router = useRouter();
   const [userPrompt, setUserPrompt] = useState<string | undefined>(undefined);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -79,6 +82,10 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
   };
 
   const imageGeneration = async (imageUri: string) => {
+    // Check if the user has credits
+    if (!user || user.remaining_credits < 1) {
+      throw new Error("No credits available");
+    }
     if (!imageUri) {
       throw new Error("No image uploaded");
     }
@@ -101,6 +108,7 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
           userInput: userPrompt,
         };
         await newHistory(generatedImage);
+        await removeCredits(1);
         router.push({
           pathname: "/image-detail",
           params: {
@@ -115,6 +123,10 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
   };
 
   const imageEditing = async (imageUri: string, prompt: string) => {
+    // Check if the user has credits
+    if (!user || user.remaining_credits < 1) {
+      throw new Error("No credits available");
+    }
     if (!imageUri) {
       throw new Error("No image uploaded");
     }
@@ -131,6 +143,7 @@ export const ImageGenerationProvider = ({ children }: ImageGenerationProviderPro
           userInput: prompt,
         };
         await newHistory(generatedImage);
+        await removeCredits(1);
         router.push({
           pathname: "/image-detail",
           params: {

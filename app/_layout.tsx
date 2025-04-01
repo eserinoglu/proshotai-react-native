@@ -10,6 +10,7 @@ import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
 import { SupabaseProvider } from "@/providers/SupabaseProvide";
+import { initRevenueCat } from "@/service/RevenueCat";
 
 /// Disable the splash screen auto hide
 SplashScreen.preventAutoHideAsync();
@@ -19,6 +20,7 @@ export default function RootLayout() {
 
   const initializeApp = async () => {
     await initHistoryDatabase();
+    await initRevenueCat();
     setIsAppReady(true);
   };
 

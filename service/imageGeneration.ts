@@ -1,3 +1,4 @@
+import { useSupabase } from "@/providers/SupabaseProvide";
 import { uriToBase64 } from "@/utils/uriToBase64";
 import { GoogleGenAI } from "@google/genai";
 
@@ -60,6 +61,7 @@ Generate a high-resolution, photorealistic product photograph suitable for e-com
 };
 
 export const editImage = async (imageUri: string, editPrompt: string): Promise<string | undefined> => {
+  // Convert the image URI to base64
   const imageBase64 = await uriToBase64(imageUri);
   if (!imageBase64) {
     throw new Error("No image uploaded");
