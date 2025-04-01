@@ -19,7 +19,7 @@ export default function History() {
     fetchAllHistory();
   }, []);
 
-  const imageWidth = (Dimensions.get("window").width - 32) / 3 - 6;
+  const imageWidth = (Dimensions.get("window").width) / 4 - 2
 
   const router = useRouter();
   const navigateToDetail = (generationHistory: GenerationHistory) => {
@@ -34,24 +34,24 @@ export default function History() {
   const [isVisibleHistoryClearSheet, setIsVisibleHistoryClearSheet] = React.useState(false);
 
   return (
-    <View style={{ paddingTop: insets.top }} className="flex-1 px-horizontal bg-background">
+    <View style={{ paddingTop: insets.top }} className="flex-1 bg-background">
       <FlatList
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
-          <View className="w-full flex flex-row items-center justify-between mb-4">
+          <View className="w-full flex flex-row items-center justify-between mb-4 px-horizontal">
             <Text className="text-[30px] font-bold text-white">History</Text>
             <HistoryClearButton setIsVisibleHistoryClearSheet={setIsVisibleHistoryClearSheet} />
           </View>
         )}
-        contentContainerClassName="gap-[6px] mt-8 pb-10"
+        contentContainerClassName="mt-8 pb-10 gap-[2px]"
+        columnWrapperClassName="gap-[2px]"
         data={allHistory}
         keyExtractor={(item) => item.imageUri}
         ListEmptyComponent={() => <EmptyListComponent />}
-        numColumns={3}
-        columnWrapperClassName="gap-[6px]"
+        numColumns={4}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigateToDetail(item)}>
-            <Image source={{ uri: item.imageUri }} style={{ width: imageWidth, aspectRatio: 1, borderRadius: 4 }} />
+            <Image source={{ uri: item.imageUri }} style={{ width: imageWidth, aspectRatio: 1, borderRadius: 0 }} />
           </TouchableOpacity>
         )}
       />

@@ -1,9 +1,15 @@
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { GenerationHistory } from "@/types/generationHistory";
 import { Gesture, GestureDetector, TextInput } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  useWorkletCallback,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArrowLeft, CheckCircle, Download, Pencil, Trash, X } from "lucide-react-native";
 import BottomSheet from "@/components/common/BottomSheet";
@@ -80,53 +86,154 @@ function ImagePreview({
   setIsActionOverlayVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const insets = useSafeAreaInsets();
-
   const scale = useSharedValue(1);
   const baseScale = useSharedValue(1);
-
   const offset = useSharedValue({ x: 0, y: 0 });
   const baseOffset = useSharedValue({ x: 0, y: 0 });
 
+  // Görsel ve container boyutlarını tutacak sharedValue'lar
+  const imageWidth = useSharedValue(0);
+  const imageHeight = useSharedValue(0);
+  const containerWidth = useSharedValue(0);
+  const containerHeight = useSharedValue(0);
+
+  // Görselin yüklenmesi
+  useEffect(() => {
+    if (imageUri) {
+      Image.getSize(imageUri, (width, height) => {
+        imageWidth.value = width;
+        imageHeight.value = height;
+      });
+    }
+  }, [imageUri]);
+
+  // Sınırları hesaplama fonksiyonu
+  const calculateBounds = useCallback(() => {
+    "worklet";
+
+    // Eğer scale 1 ise hiç kaydırma yok
+    if (scale.value <= 1) {
+      return { xMin: 0, xMax: 0, yMin: 0, yMax: 0 };
+    }
+
+    // Görsel boyutları hesaplanmadıysa
+    if (imageWidth.value === 0 || containerWidth.value === 0) {
+      return { xMin: 0, xMax: 0, yMin: 0, yMax: 0 };
+    }
+
+    // Görsel ve container aspect ratio'larını hesapla
+    const imageRatio = imageWidth.value / imageHeight.value;
+    const containerRatio = containerWidth.value / containerHeight.value;
+
+    // Container içinde görüntülenen görsel boyutlarını hesapla
+    // (aspect ratio korunarak)
+    let displayedWidth, displayedHeight;
+
+    if (imageRatio > containerRatio) {
+      // Görsel genişliği container genişliğiyle sınırlı
+      displayedWidth = containerWidth.value;
+      displayedHeight = containerWidth.value / imageRatio;
+    } else {
+      // Görsel yüksekliği container yüksekliğiyle sınırlı
+      displayedHeight = containerHeight.value;
+      displayedWidth = containerHeight.value * imageRatio;
+    }
+
+    // Ölçeklendirilmiş boyutlar
+    const scaledWidth = displayedWidth * scale.value;
+    const scaledHeight = displayedHeight * scale.value;
+
+    // X ekseni sınırları (varsa)
+    const xLimit = Math.max(0, (scaledWidth - containerWidth.value) / 2);
+
+    // Y ekseni sınırları (varsa)
+    const yLimit = Math.max(0, (scaledHeight - containerHeight.value) / 2);
+
+    return {
+      xMin: -xLimit,
+      xMax: xLimit,
+      yMin: -yLimit,
+      yMax: yLimit,
+    };
+  }, []);
+
+  const constrainPosition = useCallback(() => {
+    "worklet";
+    const bounds = calculateBounds();
+
+    // Mevcut offset'i sınırlar içinde tut
+    offset.value = {
+      x: Math.min(Math.max(offset.value.x, bounds.xMin), bounds.xMax),
+      y: Math.min(Math.max(offset.value.y, bounds.yMin), bounds.yMax),
+    };
+  }, []);
+
   const pinch = Gesture.Pinch()
     .onStart(() => {
+      "worklet";
       baseScale.value = scale.value;
     })
     .onUpdate((event) => {
-      scale.value = baseScale.value * event.scale;
+      "worklet";
+      // Yeni scale'i hesapla ve sınırla
+      scale.value = Math.min(Math.max(baseScale.value * event.scale, 1), 5);
     })
     .onEnd(() => {
+      "worklet";
+      // Scale 1'in altındaysa, 1'e resetle ve offset'i temizle
       if (scale.value < 1) {
         scale.value = withTiming(1);
         offset.value = withTiming({ x: 0, y: 0 });
-      } else if (scale.value > 5) {
-        scale.value = withTiming(5);
+      } else {
+        // Sınırları uygula
+        constrainPosition();
       }
     });
 
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd(() => {
+      "worklet";
       if (scale.value === 1) {
         scale.value = withTiming(2.5);
       } else {
         scale.value = withTiming(1);
+        offset.value = withTiming({ x: 0, y: 0 });
       }
     });
 
   const pan = Gesture.Pan()
     .onStart(() => {
+      "worklet";
       baseOffset.value = offset.value;
     })
     .onUpdate((event) => {
-      offset.value = {
-        x: baseOffset.value.x + event.translationX,
-        y: baseOffset.value.y + event.translationY,
-      };
+      "worklet";
+      // Sadece scale > 1 ise kaydırmaya izin ver
+      if (scale.value > 1) {
+        const bounds = calculateBounds();
+
+        // Yeni pozisyonu hesapla
+        const newX = baseOffset.value.x + event.translationX;
+        const newY = baseOffset.value.y + event.translationY;
+
+        // Sınırlar içinde tut
+        offset.value = {
+          x: Math.min(Math.max(newX, bounds.xMin), bounds.xMax),
+          y: Math.min(Math.max(newY, bounds.yMin), bounds.yMax),
+        };
+      }
+    })
+    .onEnd(() => {
+      "worklet";
+      constrainPosition();
     });
-  // Combine gestures
-  const composed = Gesture.Simultaneous(pinch, doubleTap);
+
+  // Tüm gesture'ları birleştir
+  const composed = Gesture.Simultaneous(pinch, doubleTap, pan);
 
   const animatedStyle = useAnimatedStyle(() => {
+    "worklet";
     return {
       transform: [{ translateX: offset.value.x }, { translateY: offset.value.y }, { scale: scale.value }],
       width: "100%",
@@ -134,12 +241,20 @@ function ImagePreview({
     };
   });
 
+  // Container boyutları değiştiğinde güncelle
+  const onLayoutContainer = useCallback((event: any) => {
+    const { width, height } = event.nativeEvent.layout;
+    containerWidth.value = width;
+    containerHeight.value = height;
+  }, []);
+
   return (
     <GestureDetector gesture={composed}>
       <View
         style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
         onTouchStart={() => setIsActionOverlayVisible(!isActionOverlayVisible)}
-        className="flex-1 overflow-hidden "
+        className="flex-1 overflow-hidden"
+        onLayout={onLayoutContainer}
       >
         <Animated.Image resizeMode="contain" source={{ uri: imageUri }} style={[animatedStyle]} />
       </View>
@@ -189,7 +304,10 @@ function ActionOverlay({
   };
 
   return (
-    <Animated.View className="flex flex-col pointer-events-box-none items-center justify-between h-full" style={[animatedStyle]}>
+    <Animated.View
+      className="flex flex-col pointer-events-box-none items-center justify-between h-full"
+      style={[animatedStyle]}
+    >
       <View
         style={{ paddingTop: insets.top }}
         className="w-full flex flex-row items-center justify-start px-horizontal"
