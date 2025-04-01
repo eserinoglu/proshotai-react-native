@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArrowLeft, CheckCircle, Download, Pencil, Trash, X } from "lucide-react-native";
-import BottomSheet from "@/components/common/BottomSheet";
+import BottomSheet from "@/components/BottomSheet";
 import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
 import { useImageGeneration } from "@/providers/ImageGenerationProvider";
 import { exportToGallery } from "@/service/imageSave";

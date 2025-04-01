@@ -5,7 +5,7 @@ import { GenerationHistory } from "@/types/generationHistory";
 import { ImageMinus, X } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
-import BottomSheet from "@/components/common/BottomSheet";
+import BottomSheet from "@/components/BottomSheet";
 
 export default function History() {
   const { allHistory, fetchHistory } = useHistoryDatabase();

@@ -1,13 +1,4 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  TextInput,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image, FlatList, TextInput } from "react-native";
 import React from "react";
 import { Coins, History, ImagePlus, WandSparkles, LoaderCircle } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -17,11 +8,10 @@ import { allBackgroundTypes } from "@/types/backgroundType";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useImageGeneration } from "@/providers/ImageGenerationProvider";
 import { useRouter } from "expo-router";
-import { useAnimatedKeyboard } from "react-native-reanimated";
+import { useSupabase } from "@/providers/SupabaseProvide";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const keyboard = useAnimatedKeyboard();
   return (
     <SafeAreaView edges={["top", "right", "left"]} className="flex-1">
       <ScrollView
@@ -47,11 +37,12 @@ export default function Home() {
 
 function Header() {
   const router = useRouter();
+  const { user } = useSupabase();
   return (
     <View className="w-full flex flex-row items-center justify-between px-horizontal">
       <TouchableOpacity className="rect flex flex-row items-center gap-2">
         <Coins size={20} color="#FF9900" />
-        <Text className="text-white font-medium">5 CREDITS</Text>
+        <Text className="text-white font-medium">{user?.remaining_credits} CREDITS</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => router.push("/history")} className="rect flex flex-row items-center gap-2">
         <History size={20} color="#787878" />

@@ -9,10 +9,7 @@ import { HistoryDatabaseProvider } from "@/providers/HistoryDatabaseProvider";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
-
-
-// TODO : Integrate RevenueCat for credit management and tracking
-// TODO : Add image preview modal with zooming, swiping and pan to dismiss functionality
+import { SupabaseProvider } from "@/providers/SupabaseProvide";
 
 /// Disable the splash screen auto hide
 SplashScreen.preventAutoHideAsync();
@@ -22,9 +19,7 @@ export default function RootLayout() {
 
   const initializeApp = async () => {
     await initHistoryDatabase();
-    setTimeout(() => {
-      setIsAppReady(true);
-    }, 2000);
+    setIsAppReady(true);
   };
 
   useEffect(() => {
@@ -47,16 +42,18 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={DarkTheme}>
       <GestureHandlerRootView className="flex-1">
-        <SafeAreaProvider>
-          <StatusBar style="auto" />
-          <HistoryDatabaseProvider>
-            <ImageGenerationProvider>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="index" />
-              </Stack>
-            </ImageGenerationProvider>
-          </HistoryDatabaseProvider>
-        </SafeAreaProvider>
+        <SupabaseProvider>
+          <SafeAreaProvider>
+            <StatusBar style="auto" />
+            <HistoryDatabaseProvider>
+              <ImageGenerationProvider>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="index" />
+                </Stack>
+              </ImageGenerationProvider>
+            </HistoryDatabaseProvider>
+          </SafeAreaProvider>
+        </SupabaseProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
   );
