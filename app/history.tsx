@@ -1,13 +1,16 @@
-import { View, Text, FlatList, Image, Dimensions, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, Image, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { GenerationHistory } from "@/types/generationHistory";
-import { ImageMinus } from "lucide-react-native";
+import { ImageMinus, X } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
+import BottomSheet from "@/components/common/BottomSheet";
 
 export default function History() {
   const { allHistory, fetchHistory } = useHistoryDatabase();
+
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const fetchAllHistory = async () => {
@@ -28,29 +31,34 @@ export default function History() {
     });
   };
 
+  const [isVisibleHistoryClearSheet, setIsVisibleHistoryClearSheet] = React.useState(false);
+
   return (
-    <View className="flex-1 px-horizontal bg-background">
-      <SafeAreaView edges={["top", "left", "right"]} className="flex-1 flex-col gap-5">
-        <FlatList
-          ListHeaderComponent={() => (
-            <View className="w-full flex flex-row items-center justify-between mb-4">
-              <Text className="text-[30px] font-bold text-white">History</Text>
-              <HistoryClearButton />
-            </View>
-          )}
-          contentContainerClassName="gap-[6px] mt-8 pb-10"
-          data={allHistory}
-          keyExtractor={(item) => item.imageUri}
-          ListEmptyComponent={() => <EmptyListComponent />}
-          numColumns={3}
-          columnWrapperClassName="gap-[6px]"
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigateToDetail(item)}>
-              <Image source={{ uri: item.imageUri }} style={{ width: imageWidth, aspectRatio: 1, borderRadius: 4 }} />
-            </TouchableOpacity>
-          )}
-        />
-      </SafeAreaView>
+    <View style={{ paddingTop: insets.top }} className="flex-1 px-horizontal bg-background">
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={() => (
+          <View className="w-full flex flex-row items-center justify-between mb-4">
+            <Text className="text-[30px] font-bold text-white">History</Text>
+            <HistoryClearButton setIsVisibleHistoryClearSheet={setIsVisibleHistoryClearSheet} />
+          </View>
+        )}
+        contentContainerClassName="gap-[6px] mt-8 pb-10"
+        data={allHistory}
+        keyExtractor={(item) => item.imageUri}
+        ListEmptyComponent={() => <EmptyListComponent />}
+        numColumns={3}
+        columnWrapperClassName="gap-[6px]"
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigateToDetail(item)}>
+            <Image source={{ uri: item.imageUri }} style={{ width: imageWidth, aspectRatio: 1, borderRadius: 4 }} />
+          </TouchableOpacity>
+        )}
+      />
+      <HistoryClearConfirmationSheet
+        isVisibleHistoryClearSheet={isVisibleHistoryClearSheet}
+        setIsVisibleHistoryClearSheet={setIsVisibleHistoryClearSheet}
+      />
     </View>
   );
 }
@@ -64,11 +72,68 @@ function EmptyListComponent() {
   );
 }
 
-function HistoryClearButton() {
-  const { deleteAllHistory } = useHistoryDatabase();
+function HistoryClearButton({
+  setIsVisibleHistoryClearSheet,
+}: {
+  setIsVisibleHistoryClearSheet: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   return (
-    <TouchableOpacity onPress={deleteAllHistory} className="px-[12px] py-[6px] rounded-xl bg-secondaryBg">
+    <TouchableOpacity
+      onPress={() => setIsVisibleHistoryClearSheet(true)}
+      className="px-[12px] py-[6px] rounded-xl bg-secondaryBg"
+    >
       <Text className="text-[14px] font-medium text-secondaryText">Clear</Text>
     </TouchableOpacity>
+  );
+}
+
+function HistoryClearConfirmationSheet({
+  isVisibleHistoryClearSheet,
+  setIsVisibleHistoryClearSheet,
+}: {
+  isVisibleHistoryClearSheet: boolean;
+  setIsVisibleHistoryClearSheet: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const { deleteAllHistory } = useHistoryDatabase();
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const handleDeleteHistory = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteAllHistory();
+      setIsVisibleHistoryClearSheet(false);
+    } catch (error) {
+      console.error("Error deleting history:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+  return (
+    <BottomSheet isVisible={isVisibleHistoryClearSheet} setIsVisible={setIsVisibleHistoryClearSheet} height={180}>
+      <View className="w-full flex flex-col px-horizontal pt-5">
+        <View className="w-full flex flex-row items-center justify-between">
+          <Text className="text-[22px] font-semibold text-white">Clear History</Text>
+          <TouchableOpacity
+            onPress={() => setIsVisibleHistoryClearSheet(false)}
+            className="p-2 rounded-full bg-white/5"
+          >
+            <X size={16} strokeWidth={3} color={"#787878"} />
+          </TouchableOpacity>
+        </View>
+        <Text className="text-[14px] text-secondaryText leading-snug mt-3">
+          Are you sure you want to clear the history? This action will delete all the images that you have generated.
+          Cannot be undone.
+        </Text>
+        <TouchableOpacity
+          onPress={handleDeleteHistory}
+          className="w-full bg-red-500 h-[45px] rounded-xl flex items-center justify-center mt-5"
+        >
+          {isDeleting ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text className="text-white font-medium text-[16px]">Delete</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+    </BottomSheet>
   );
 }

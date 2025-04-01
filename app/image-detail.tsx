@@ -5,7 +5,7 @@ import { GenerationHistory } from "@/types/generationHistory";
 import { Gesture, GestureDetector, TextInput } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CheckCircle, Download, Pencil, Trash, X } from "lucide-react-native";
+import { ArrowLeft, CheckCircle, Download, Pencil, Trash, X } from "lucide-react-native";
 import BottomSheet from "@/components/common/BottomSheet";
 import { useHistoryDatabase } from "@/providers/HistoryDatabaseProvider";
 import { useImageGeneration } from "@/providers/ImageGenerationProvider";
@@ -158,10 +158,19 @@ function ActionOverlay({
   setDeleteSheetVisible: React.Dispatch<React.SetStateAction<boolean>>;
   handleDownload: () => Promise<void>;
 }) {
+  // Router
+  const router = useRouter();
+
   const insets = useSafeAreaInsets();
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: withTiming(isActionOverlayVisible ? 1 : 0),
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 2,
     };
   });
 
@@ -180,32 +189,45 @@ function ActionOverlay({
   };
 
   return (
-    <Animated.View
-      style={[animatedStyle, { paddingBottom: insets.bottom + 12 }]}
-      className="w-full flex flex-row items-center justify-between absolute bottom-0 px-horizontal bg-black/30 pt-4"
-    >
-      <TouchableOpacity className="flex w-[55px] items-center justify-center bg-tint rounded-xl h-[44px]">
-        {isSaving ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : isSaved ? (
-          <CheckCircle size={20} color={"#fff"} />
-        ) : (
-          <Download size={20} color={"#fff"} onPress={handleDownloadImage} />
-        )}
-      </TouchableOpacity>
-      <View className="flex flex-row items-center gap-2">
+    <Animated.View className="flex flex-col pointer-events-box-none items-center justify-between h-full" style={[animatedStyle]}>
+      <View
+        style={{ paddingTop: insets.top }}
+        className="w-full flex flex-row items-center justify-start px-horizontal"
+      >
         <TouchableOpacity
-          onPress={() => setIsEditSheetVisible(true)}
-          className="bg-secondaryBg w-[55px] rounded-xl h-[44px] border border-border flex items-center justify-center"
+          onPress={() => router.back()}
+          className="p-3 rounded-full bg-secondaryBg border border-border flex items-center justify-center"
         >
-          <Pencil size={20} color={"#787878"} />
+          <ArrowLeft size={20} color={"#fff"} />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setDeleteSheetVisible(true)}
-          className="bg-secondaryBg w-[55px] rounded-xl h-[44px] border border-border flex items-center justify-center"
-        >
-          <Trash size={20} color={"#787878"} />
+      </View>
+      <View
+        style={{ paddingBottom: insets.bottom + 10 }}
+        className="w-full flex flex-row items-center justify-between px-horizontal bg-black/30 pt-4"
+      >
+        <TouchableOpacity className="flex w-[50px] items-center justify-center bg-tint rounded-full aspect-square">
+          {isSaving ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : isSaved ? (
+            <CheckCircle size={20} color={"#fff"} />
+          ) : (
+            <Download size={20} color={"#fff"} onPress={handleDownloadImage} />
+          )}
         </TouchableOpacity>
+        <View className="flex flex-row items-center gap-2">
+          <TouchableOpacity
+            onPress={() => setIsEditSheetVisible(true)}
+            className="bg-secondaryBg w-[50px] rounded-full aspect-square border border-border flex items-center justify-center"
+          >
+            <Pencil size={20} color={"#787878"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setDeleteSheetVisible(true)}
+            className="bg-secondaryBg w-[50px] rounded-full aspect-square border border-border flex items-center justify-center"
+          >
+            <Trash size={20} color={"#787878"} />
+          </TouchableOpacity>
+        </View>
       </View>
     </Animated.View>
   );
@@ -237,7 +259,7 @@ function EditImageSheet({
     }
   };
   return (
-    <BottomSheet isVisible={isEditSheetVisible} setIsVisible={setIsEditSheetVisible} height={270}>
+    <BottomSheet isVisible={isEditSheetVisible} setIsVisible={setIsEditSheetVisible} height={220}>
       <View className="px-horizontal pt-6 flex flex-col gap-4">
         <View className="w-full flex flex-row items-center justify-between">
           <Text className="text-[22px] font-semibold text-white ml-2">Edit Image</Text>
@@ -248,7 +270,7 @@ function EditImageSheet({
         <TextInput
           multiline
           textAlignVertical="top"
-          className="text-white p-4 rounded-xl border border-border h-[150px] text-[16px] bg-secondaryBg"
+          className="text-white p-4 rounded-xl border border-border h-[100px] text-[16px] bg-secondaryBg"
           value={editPrompt}
           onChangeText={setEditPrompt}
           placeholder="Make the purse pink."
