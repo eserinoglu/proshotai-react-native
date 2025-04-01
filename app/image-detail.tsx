@@ -252,7 +252,7 @@ function ImagePreview({
     <GestureDetector gesture={composed}>
       <View
         style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
-        onTouchStart={() => setIsActionOverlayVisible(!isActionOverlayVisible)}
+        onTouchEnd={() => setIsActionOverlayVisible(!isActionOverlayVisible)}
         className="flex-1 overflow-hidden"
         onLayout={onLayoutContainer}
       >
