@@ -10,7 +10,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useSupabase } from "@/stores/useSupabase";
 import CustomPaywall from "@/components/Paywall";
 import { useRevenueCat } from "@/stores/useRevenueCat";
-import { Text, TextInput } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import ErrorModal from "@/components/ErrorModal";
 
 // Disable font-scaling
@@ -29,11 +29,25 @@ export default function RootLayout() {
   const { initRevenueCat, getOfferings } = useRevenueCat();
   const [isAppReady, setIsAppReady] = useState(false);
 
+  const [initError, setInitError] = useState<string | null>(null);
+
   const initializeApp = async () => {
-    await initHistoryDatabase();
-    await initRevenueCat();
-    await checkUser();
-    await getOfferings();
+    setInitError(null)
+    setIsAppReady(false);
+    try {
+      await initHistoryDatabase();
+      await initRevenueCat();
+      await checkUser();
+      await getOfferings();
+    } catch (error) {
+      if (error instanceof Error) {
+        setInitError(error.message);
+      } else {
+        setInitError("An unknown error occurred");
+      }
+    } finally {
+      setIsAppReady(true);
+    }
   };
 
   useEffect(() => {
@@ -45,13 +59,23 @@ export default function RootLayout() {
   useEffect(() => {
     const init = async () => {
       await initializeApp();
-      setIsAppReady(true);
     };
     init();
   }, []);
 
   if (!isAppReady) {
     return null;
+  }
+
+  if (initError) {
+    return (
+      <View className="flex-1 bg-background flex items-center justify-center flex-col">
+        <Text className="text-white text-[16px] font-semibold">{initError}</Text>
+        <TouchableOpacity onPress={initializeApp} className="bg-tint px-4 py-2 rounded-xl mt-6">
+          <Text className="text-[16px] text-white">Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   return (
@@ -62,8 +86,8 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
           </Stack>
-          <CustomPaywall />
           <ErrorModal />
+          <CustomPaywall />
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </ThemeProvider>

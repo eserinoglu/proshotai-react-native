@@ -34,6 +34,9 @@ export const useSupabase = create<SupabaseStore>((set, get) => ({
     try {
       const userId = await getUserId();
       const { data, error } = await supabase.from("users").select("*").eq("id", userId).single();
+      if (error) {
+        throw error;
+      }
       if (data) {
         set({ user: data });
         Purchases.logIn(userId);
@@ -48,6 +51,10 @@ export const useSupabase = create<SupabaseStore>((set, get) => ({
         })
         .select()
         .single();
+
+      if (createError) {
+        throw createError;
+      }
 
       if (newUser) {
         set({ user: newUser });
