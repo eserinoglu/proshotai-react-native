@@ -35,7 +35,6 @@ export const useSupabase = create<SupabaseStore>((set, get) => ({
       const { data, error } = await supabase.from("users").select("*").eq("id", userId).single();
       if (error) {
         console.error("Error fetching user:", error);
-        throw new Error("Error fetching user");
       }
       if (data) {
         set({ user: data });

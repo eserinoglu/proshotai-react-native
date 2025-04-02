@@ -9,6 +9,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { useImageGeneration } from "@/stores/useImageGeneration";
 import { useRouter } from "expo-router";
 import { useSupabase } from "@/stores/useSupabase";
+import { useRevenueCat } from "@/stores/useRevenueCat";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -38,9 +39,10 @@ export default function Home() {
 function Header() {
   const router = useRouter();
   const { user } = useSupabase();
+  const { setShowPaywall } = useRevenueCat();
   return (
     <View className="w-full flex flex-row items-center justify-between px-horizontal">
-      <TouchableOpacity className="rect flex flex-row items-center gap-2">
+      <TouchableOpacity onPress={() => setShowPaywall(true)} className="rect flex flex-row items-center gap-2">
         <Coins size={20} color="#FF9900" />
         <Text className="text-white font-medium">{user?.remaining_credits} CREDITS</Text>
       </TouchableOpacity>

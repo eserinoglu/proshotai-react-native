@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
@@ -70,7 +70,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "b09210a9-e356-4444-8a51-ecc53280d84b"
+        "projectId": "e0d459fd-a766-4810-8189-6b2033c3d28f"
       }
     }
   }

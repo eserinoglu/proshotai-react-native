@@ -88,6 +88,9 @@ PODS:
     - libwebp/sharpyuv
   - PurchasesHybridCommon (13.26.0):
     - RevenueCat (= 5.20.0)
+  - PurchasesHybridCommonUI (13.26.0):
+    - PurchasesHybridCommon (= 13.26.0)
+    - RevenueCatUI (= 5.20.0)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1678,6 +1681,8 @@ PODS:
     - React-perflogger (= 0.76.7)
     - React-utils (= 0.76.7)
   - RevenueCat (5.20.0)
+  - RevenueCatUI (5.20.0):
+    - RevenueCat (= 5.20.0)
   - RNGestureHandler (2.20.2):
     - DoubleConversion
     - glog
@@ -1699,6 +1704,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNPaywalls (8.9.1):
+    - PurchasesHybridCommonUI (= 13.26.0)
+    - React-Core
   - RNPurchases (8.9.1):
     - PurchasesHybridCommon (= 13.26.0)
     - React-Core
@@ -1973,6 +1981,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPaywalls (from `../node_modules/react-native-purchases-ui`)
   - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -1983,7 +1992,9 @@ SPEC REPOS:
   trunk:
     - libwebp
     - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
     - RevenueCat
+    - RevenueCatUI
     - SDWebImage
     - SDWebImageWebPCoder
     - SocketRocket
@@ -2162,6 +2173,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPaywalls:
+    :path: "../node_modules/react-native-purchases-ui"
   RNPurchases:
     :path: "../node_modules/react-native-purchases"
   RNReanimated:
@@ -2203,6 +2216,7 @@ SPEC CHECKSUMS:
   hermes-engine: eb4a80f6bf578536c58a44198ec93a30f6e69218
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   PurchasesHybridCommon: fa166fc8b385cf80f581f923c91d8ccffe5dd7f8
+  PurchasesHybridCommonUI: a5f005e37234f8890cfaf0ffa531e93c3cbac9a9
   RCT-Folly: bf5c0376ffe4dd2cf438dcf86db385df9fdce648
   RCTDeprecation: 7691283dd69fed46f6653d376de6fa83aaad774c
   RCTRequired: eac044a04629288f272ee6706e31f81f3a2b4bfe
@@ -2262,7 +2276,9 @@ SPEC CHECKSUMS:
   ReactCodegen: 9a99ced51aab02909c7ab5056f33dff7054305bb
   ReactCommon: 04292c6f596181ebf755e7929d96d2148542b0e8
   RevenueCat: e47ff90dfd271fde155a4befe48e8fc02e8281e4
+  RevenueCatUI: aa9362b300c9025d30a1b36a5cd396d0313fc8ea
   RNGestureHandler: fc5ce5bf284640d3af6431c3a5c3bc121e98d045
+  RNPaywalls: e7ecfddcc4d46c55eaf5e7708ae8d376f1479e9a
   RNPurchases: 596c32adac473fe4c9aa6185defdaa1dbd3b68f9
   RNReanimated: df96d71c9d7deeecb980a54d1f15bb17f43952a7
   RNScreens: d022507f2b6d76c73335e9e35aedcf7bb2f791b0

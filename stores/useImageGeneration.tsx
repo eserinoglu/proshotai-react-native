@@ -3,7 +3,6 @@ import { allBackgroundTypes, BackgroundType } from "@/types/backgroundType";
 import { allPresentationTypes, PresentationType } from "@/types/presentationType";
 import { allShotSizes, ShotSize } from "@/types/shotSize";
 import { generateImage, editImage } from "@/service/imageGeneration";
-import { useRouter } from "expo-router";
 import { exportToGallery } from "@/service/imageSave";
 import { base64ToUri } from "@/utils/base64ToUri";
 import { useHistoryDatabase } from "@/stores/useHistoryDatabase";

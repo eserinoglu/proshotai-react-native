@@ -14,7 +14,6 @@ export const generateImage = async (
   if (!imageBase64) {
     throw new Error("No image uploaded");
   }
-  console.log("Generating image base64", imageBase64.length);
   // Prompt for the image generation model
   let basePrompt = `
 Generate a high-resolution, photorealistic product photograph suitable for e-commerce and advertising. The primary subject is the provided product image. Focus on sharp details, accurate color representation, realistic material textures, and natural, flattering lighting that includes soft shadows and subtle highlights to define the product's form. Ensure a visually appealing and balanced composition. The overall aesthetic must be professional, clean, and high-quality. Specific details regarding presentation, shot angle, and background will follow. Avoid generating text or logos unless specifically requested. ${presentationTypePrompt} ${backgroundTypePrompt} ${shotSizePrompt}
@@ -63,7 +62,6 @@ Generate a high-resolution, photorealistic product photograph suitable for e-com
 export const editImage = async (imageUri: string, editPrompt: string): Promise<string | undefined> => {
   // Convert the image URI to base64
   const imageBase64 = await uriToBase64(imageUri);
-  console.log("Editing image base64", imageBase64.length);
   if (!imageBase64) {
     throw new Error("No image uploaded");
   }

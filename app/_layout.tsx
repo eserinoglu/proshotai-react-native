@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
 import { initRevenueCat } from "@/service/RevenueCat";
 import { useSupabase } from "@/stores/useSupabase";
+import CustomPaywall from "@/components/Paywall";
 
 /// Disable the splash screen auto hide
 SplashScreen.preventAutoHideAsync();
@@ -21,7 +22,6 @@ export default function RootLayout() {
     await initHistoryDatabase();
     await checkUser();
     await initRevenueCat();
-    setIsAppReady(true);
   };
 
   useEffect(() => {
@@ -33,6 +33,7 @@ export default function RootLayout() {
   useEffect(() => {
     const init = async () => {
       await initializeApp();
+      setIsAppReady(true);
     };
     init();
   }, []);
@@ -49,6 +50,7 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
           </Stack>
+          <CustomPaywall />
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
