@@ -30,6 +30,7 @@ export default function ImageDetail() {
   const [isEditSheetVisible, setIsEditSheetVisible] = React.useState(false);
   const handleEdit = async () => {
     const generated = await imageEditing(image.imageUri, editPrompt);
+    if (!generated) return;
     setIsEditSheetVisible(false);
     router.push({
       pathname: "/image-detail",

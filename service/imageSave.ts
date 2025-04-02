@@ -10,6 +10,5 @@ export const exportToGallery = async (imageUri: string) => {
     await MediaLibrary.createAlbumAsync("Generated", asset, false);
   } catch (error) {
     throw error;
-    return null;
   }
 };

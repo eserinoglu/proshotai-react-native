@@ -21,6 +21,7 @@ export default function BottomSheet({
     return {
       pointerEvents: isVisible ? "auto" : "none",
       zIndex: 5,
+      backgroundColor: withTiming(isVisible ? "rgba(0, 0, 0, 0.5)" : "transparent"),
     };
   });
   const sheetStyle = useAnimatedStyle(() => {

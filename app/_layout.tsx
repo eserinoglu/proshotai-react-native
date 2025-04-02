@@ -10,6 +10,15 @@ import * as SplashScreen from "expo-splash-screen";
 import { useSupabase } from "@/stores/useSupabase";
 import CustomPaywall from "@/components/Paywall";
 import { useRevenueCat } from "@/stores/useRevenueCat";
+import { Text, TextInput } from "react-native";
+
+// Disable font-scaling
+(Text as any).defaultProps = {
+  allowFontScaling: false,
+};
+(TextInput as any).defaultProps = {
+  allowFontScaling: false,
+};
 
 /// Disable the splash screen auto hide
 SplashScreen.preventAutoHideAsync();

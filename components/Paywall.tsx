@@ -4,12 +4,12 @@ import BottomSheet from "./BottomSheet";
 import { useRevenueCat } from "../stores/useRevenueCat";
 import { PurchasesPackage } from "react-native-purchases";
 import * as Haptics from "expo-haptics";
-import { X } from "lucide-react-native";
+import { Activity, X } from "lucide-react-native";
 
 export default function CustomPaywall() {
   const offeringName = "credits";
 
-  const { showPaywall, setShowPaywall, offerings, purchase } = useRevenueCat();
+  const { showPaywall, setShowPaywall, offerings, purchase, restore } = useRevenueCat();
   const [selectedPackage, setSelectedPackage] = React.useState<PurchasesPackage | null>(
     offerings[offeringName]?.availablePackages[0]
   );
@@ -24,6 +24,21 @@ export default function CustomPaywall() {
       console.error("Purchase error:", error);
     } finally {
       setIsPurchasing(false);
+    }
+  };
+
+  // Restore purchases
+  const [isRestoring, setIsRestoring] = React.useState(false);
+  const handleRestore = async () => {
+    setIsRestoring(true);
+    try {
+      await restore();
+      alert("Purchase restored successfully");
+    } catch (error) {
+      alert("Error restoring purchase" + error);
+      console.error("Restore error:", error);
+    } finally {
+      setIsRestoring(false);
     }
   };
 
@@ -70,7 +85,10 @@ export default function CustomPaywall() {
         {/* Footer Links and Restore Button */}
         <View className="w-full flex flex-row items-center">
           <Text className="text-white/40 flex-1 text-center text-[12px]">Privacy Policy</Text>
-          <Text className="text-white/40 flex-1 text-center text-[12px]">Restore Purchase</Text>
+          <TouchableOpacity className="flex flex-row items-center flex-1 gap-1 opacity-40" onPress={handleRestore}>
+            {isRestoring && <ActivityIndicator size={12} color="white" />}
+            <Text className="text-white flex-1 text-center text-[12px]">Restore Purchase</Text>
+          </TouchableOpacity>
           <Text className="text-white/40 flex-1 text-center text-[12px]">Terms</Text>
         </View>
       </View>

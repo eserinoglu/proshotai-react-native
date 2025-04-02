@@ -1,7 +1,8 @@
 import { uriToBase64 } from "@/utils/uriToBase64";
 import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenAI({ apiKey: "AIzaSyC6ASYNRqaatr7e3iTsJrxUvSElaWTUARA" });
+const key = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+const genAI = new GoogleGenAI({ apiKey: key });
 
 export const generateImage = async (
   imageUri: string,

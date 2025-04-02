@@ -33,26 +33,25 @@ export const useSupabase = create<SupabaseStore>((set, get) => ({
     try {
       const userId = await getUserId();
       const { data, error } = await supabase.from("users").select("*").eq("id", userId).single();
-      if (error) {
-        console.error("Error fetching user:", error);
-      }
       if (data) {
         set({ user: data });
-      } else {
-        const { data: newUser, error: createError } = await supabase
-          .from("users")
-          .insert({ id: userId, remaining_credits: 5 })
-          .select()
-          .single();
-        if (createError) {
-          console.error("Error creating user:", createError);
-          throw new Error("Error creating user");
-        }
+        return;
+      }
+      // If user does not exist, create a new user
+      const { data: newUser, error: createError } = await supabase
+        .from("users")
+        .insert({
+          id: userId,
+          remaning_credits: 5,
+        })
+        .select()
+        .single();
+
+      if (newUser) {
         set({ user: newUser });
       }
     } catch (error) {
-      console.error("Error checking user:", error);
-      throw new Error("Error checking user");
+      throw error;
     }
   },
   addCredits: async (amount: number) => {
