@@ -8,6 +8,7 @@ import { base64ToUri } from "@/utils/base64ToUri";
 import { useHistoryDatabase } from "@/stores/useHistoryDatabase";
 import { useSupabase } from "./useSupabase";
 import { GenerationHistory } from "@/types/generationHistory";
+import { useRevenueCat } from "./useRevenueCat";
 
 type ImageGenerationStore = {
   uploadedImage: string | null;
@@ -30,7 +31,10 @@ export const useImageGeneration = create<ImageGenerationStore>((set, get) => ({
   setUploadedImage: (image) => set({ uploadedImage: image }),
   imageGeneration: async (imageUri: string) => {
     const user = useSupabase.getState().user;
-    if (!user?.remaining_credits || user.remaining_credits < 1) return;
+    if (!user?.remaining_credits || user.remaining_credits < 1) {
+      useRevenueCat.getState().setShowPaywall(true);
+      return;
+    }
     const { selectedShotSize, selectedPresentationType, selectedBackgroundType, userPrompt } = get();
     const response = await generateImage(
       imageUri,
@@ -56,7 +60,10 @@ export const useImageGeneration = create<ImageGenerationStore>((set, get) => ({
   },
   imageEditing: async (imageUri: string, prompt: string) => {
     const user = useSupabase.getState().user;
-    if (!user?.remaining_credits || user.remaining_credits < 1) return;
+    if (!user?.remaining_credits || user.remaining_credits < 1) {
+      useRevenueCat.getState().setShowPaywall(true);
+      return;
+    }
     const response = await editImage(imageUri, prompt);
     if (response) {
       const uri = await base64ToUri(response);

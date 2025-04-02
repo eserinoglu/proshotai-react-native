@@ -9,7 +9,7 @@ export const exportToGallery = async (imageUri: string) => {
     const asset = await MediaLibrary.createAssetAsync(imageUri);
     await MediaLibrary.createAlbumAsync("Generated", asset, false);
   } catch (error) {
-    console.error("Fotoğrafı kaydederken hata oluştu:", error);
+    throw error;
     return null;
   }
 };

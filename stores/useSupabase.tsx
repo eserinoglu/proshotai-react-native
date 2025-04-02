@@ -69,9 +69,8 @@ export const useSupabase = create<SupabaseStore>((set, get) => ({
         console.error("Error adding credits to user:", error);
         throw new Error("Error adding credits to user");
       }
-    } catch {
-      console.error("Error adding credits to user");
-      throw new Error("Error adding credits to user");
+    } catch (error) {
+      throw error;
     }
   },
   removeCredits: async (amount: number) => {
@@ -88,9 +87,8 @@ export const useSupabase = create<SupabaseStore>((set, get) => ({
         console.error("Error removing credits from user:", error);
         throw new Error("Error removing credits from user");
       }
-    } catch {
-      console.error("Error removing credits from user");
-      throw new Error("Error removing credits from user");
+    } catch (error) {
+      throw error;
     }
   },
 }));

@@ -54,8 +54,7 @@ Generate a high-resolution, photorealistic product photograph suitable for e-com
       }
     }
   } catch (error) {
-    console.error("Error while editing image. Image generation service.", error);
-    throw new Error("Error while editing image. Image generation service.");
+    throw error;
   }
 };
 
@@ -97,15 +96,6 @@ export const editImage = async (imageUri: string, editPrompt: string): Promise<s
       }
     }
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(
-        "Error while editing image. Image generation service.",
-        error.message,
-        error.name,
-        error.stack,
-        error.cause
-      );
-    }
-    throw new Error("Error while editing image. Image generation service.");
+    throw error;
   }
 };

@@ -7,21 +7,23 @@ import { useEffect, useState } from "react";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
-import { initRevenueCat } from "@/service/RevenueCat";
 import { useSupabase } from "@/stores/useSupabase";
 import CustomPaywall from "@/components/Paywall";
+import { useRevenueCat } from "@/stores/useRevenueCat";
 
 /// Disable the splash screen auto hide
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { checkUser } = useSupabase();
+  const { initRevenueCat, getOfferings } = useRevenueCat();
   const [isAppReady, setIsAppReady] = useState(false);
 
   const initializeApp = async () => {
     await initHistoryDatabase();
     await checkUser();
     await initRevenueCat();
+    await getOfferings();
   };
 
   useEffect(() => {

@@ -13,23 +13,39 @@ type HistoryDatabase = {
 export const useHistoryDatabase = create<HistoryDatabase>((set) => ({
   allHistory: [],
   fetchHistory: async () => {
-    const history = await getHistory();
-    set({ allHistory: history });
+    try {
+      const history = await getHistory();
+      set({ allHistory: history });
+    } catch (error) {
+      throw error;
+    }
   },
   newHistory: async (image: GenerationHistory) => {
-    const newHistory = await createHistory(image);
-    if (newHistory) {
-      set((state) => ({ allHistory: [newHistory, ...state.allHistory] }));
+    try {
+      const newHistory = await createHistory(image);
+      if (newHistory) {
+        set((state) => ({ allHistory: [newHistory, ...state.allHistory] }));
+      }
+    } catch (error) {
+      throw error;
     }
   },
   deleteAllHistory: async () => {
-    await clearHistory();
-    set({ allHistory: [] });
+    try {
+      await clearHistory();
+      set({ allHistory: [] });
+    } catch (error) {
+      throw error;
+    }
   },
   deleteHistoryByImage: async (image) => {
-    await deleteHistory(image);
-    set((state) => ({
-      allHistory: state.allHistory.filter((item) => item.imageUri !== image.imageUri),
-    }));
+    try {
+      await deleteHistory(image);
+      set((state) => ({
+        allHistory: state.allHistory.filter((item) => item.imageUri !== image.imageUri),
+      }));
+    } catch (error) {
+      throw error;
+    }
   },
 }));

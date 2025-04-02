@@ -1,5 +1,5 @@
-import { View, Text, Dimensions, TouchableOpacity, Touchable, ActivityIndicator } from "react-native";
-import React, { useEffect } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import React from "react";
 import BottomSheet from "./BottomSheet";
 import { useRevenueCat } from "../stores/useRevenueCat";
 import { PurchasesPackage } from "react-native-purchases";
@@ -7,17 +7,12 @@ import * as Haptics from "expo-haptics";
 import { X } from "lucide-react-native";
 
 export default function CustomPaywall() {
-  const { showPaywall, setShowPaywall, offerings, getOfferings, purchase } = useRevenueCat();
-  const [selectedPackage, setSelectedPackage] = React.useState<PurchasesPackage | null>(null);
-
   const offeringName = "credits";
 
-  useEffect(() => {
-    const fetchOfferings = async () => {
-      await getOfferings();
-    };
-    fetchOfferings().then(() => setSelectedPackage(offerings[offeringName]?.availablePackages[0] || null));
-  }, []);
+  const { showPaywall, setShowPaywall, offerings, purchase } = useRevenueCat();
+  const [selectedPackage, setSelectedPackage] = React.useState<PurchasesPackage | null>(
+    offerings[offeringName]?.availablePackages[0]
+  );
 
   const [isPurchasing, setIsPurchasing] = React.useState(false);
   const handlePurchase = async () => {
@@ -27,7 +22,6 @@ export default function CustomPaywall() {
       await purchase(selectedPackage);
     } catch (error) {
       console.error("Purchase error:", error);
-      // Handle purchase error
     } finally {
       setIsPurchasing(false);
     }
@@ -37,8 +31,8 @@ export default function CustomPaywall() {
     <BottomSheet isVisible={showPaywall} setIsVisible={setShowPaywall} height={470}>
       <View className="flex flex-col gap-6 pt-6 px-horizontal">
         {/* Header */}
-        <View className="w-full flex-row items-top justify-between">
-          <Text className="text-3xl font-bold text-white flex-1">Continue generating product photos.</Text>
+        <View className="w-full flex-row gap-3 items-top justify-between">
+          <Text className="text-3xl font-bold text-white flex-1">Get more credits to continue</Text>
           <TouchableOpacity
             onPress={() => setShowPaywall(false)}
             className="rounded-full bg-white/5 w-[30px] aspect-square flex items-center justify-center"
