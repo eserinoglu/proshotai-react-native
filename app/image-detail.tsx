@@ -10,6 +10,7 @@ import BottomSheet from "@/components/BottomSheet";
 import { useHistoryDatabase } from "@/stores/useHistoryDatabase";
 import { useImageGeneration } from "@/stores/useImageGeneration";
 import { exportToGallery } from "@/service/imageSave";
+import { useError } from "@/stores/useError";
 
 export default function ImageDetail() {
   const searchParams = useLocalSearchParams();
@@ -28,25 +29,40 @@ export default function ImageDetail() {
   // Edit sheet visibility and other editing options
   const [editPrompt, setEditPrompt] = React.useState("");
   const [isEditSheetVisible, setIsEditSheetVisible] = React.useState(false);
+
+  // Error state
+  const { setErrorMessage } = useError();
   const handleEdit = async () => {
-    const generated = await imageEditing(image.imageUri, editPrompt);
-    if (!generated) return;
-    setIsEditSheetVisible(false);
-    router.push({
-      pathname: "/image-detail",
-      params: { generatedImage: JSON.stringify(generated) },
-    });
+    try {
+      const generated = await imageEditing(image.imageUri, editPrompt);
+      if (!generated) return;
+      setIsEditSheetVisible(false);
+      router.push({
+        pathname: "/image-detail",
+        params: { generatedImage: JSON.stringify(generated) },
+      });
+    } catch (error) {
+      setErrorMessage("An error occurred while editing the image. Please try again.", handleEdit);
+    }
   };
 
   // Delete sheet visibility and other delete options
   const [isDeleteSheetVisible, setIsDeleteSheetVisible] = React.useState(false);
   const handleDelete = async () => {
-    await deleteHistoryByImage(image);
+    try {
+      await deleteHistoryByImage(image);
+    } catch (error) {
+      setErrorMessage("An error occurred while deleting the image. Please try again.", handleDelete);
+    }
   };
 
   // Save image to gallery
   const saveImage = async () => {
-    await exportToGallery(image.imageUri);
+    try {
+      await exportToGallery(image.imageUri);
+    } catch (error) {
+      setErrorMessage("An error occurred while saving the image. Please try again.", saveImage);
+    }
   };
 
   return (

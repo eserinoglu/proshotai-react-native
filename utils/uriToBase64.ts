@@ -20,7 +20,6 @@ export const uriToBase64 = async (uri: string): Promise<string> => {
       return base64String;
     }
   } catch (error) {
-    console.error("Error converting URI to Base64", error);
-    throw new Error("Error converting URI to Base64");
+    throw error;
   }
 };

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, FlatList, TextInput } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Coins, History, ImagePlus, WandSparkles, LoaderCircle } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { allPresentationTypes } from "@/types/presentationType";
@@ -10,9 +10,11 @@ import { useImageGeneration } from "@/stores/useImageGeneration";
 import { useRouter } from "expo-router";
 import { useSupabase } from "@/stores/useSupabase";
 import { useRevenueCat } from "@/stores/useRevenueCat";
+import { useError } from "@/stores/useError";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
+  const { user } = useSupabase();
   return (
     <SafeAreaView edges={["top", "right", "left"]} className="flex-1">
       <ScrollView
@@ -31,6 +33,9 @@ export default function Home() {
         <BackgroundTypeSelection />
         <UserInput />
         <GenerateButton />
+
+        {/* User UUID */}
+        <Text selectable className="text-secondaryText text-[10px] mx-auto">{user?.id}</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -206,6 +211,10 @@ function GenerateButton() {
   const { imageGeneration, uploadedImage } = useImageGeneration();
   const [isGenerating, setIsGenerating] = React.useState(false);
   const router = useRouter();
+
+  // Error
+  const { setErrorMessage } = useError();
+
   const handleImageGeneration = async () => {
     setIsGenerating(true);
     try {
@@ -220,7 +229,7 @@ function GenerateButton() {
         });
       }
     } catch (error) {
-      console.error("Error generating image:", error);
+      setErrorMessage("An error occurred while generating the image. Please try again.", handleImageGeneration);
     } finally {
       setIsGenerating(false);
     }

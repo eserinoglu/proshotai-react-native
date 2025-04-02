@@ -11,6 +11,7 @@ import { useSupabase } from "@/stores/useSupabase";
 import CustomPaywall from "@/components/Paywall";
 import { useRevenueCat } from "@/stores/useRevenueCat";
 import { Text, TextInput } from "react-native";
+import ErrorModal from "@/components/ErrorModal";
 
 // Disable font-scaling
 (Text as any).defaultProps = {
@@ -30,8 +31,8 @@ export default function RootLayout() {
 
   const initializeApp = async () => {
     await initHistoryDatabase();
-    await checkUser();
     await initRevenueCat();
+    await checkUser();
     await getOfferings();
   };
 
@@ -62,6 +63,7 @@ export default function RootLayout() {
             <Stack.Screen name="index" />
           </Stack>
           <CustomPaywall />
+          <ErrorModal />
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </ThemeProvider>

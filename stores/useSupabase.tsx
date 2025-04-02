@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import { getUserId } from "@/utils/getUserId";
+import Purchases from "react-native-purchases";
 
 // User model
 type User = {
@@ -35,6 +36,7 @@ export const useSupabase = create<SupabaseStore>((set, get) => ({
       const { data, error } = await supabase.from("users").select("*").eq("id", userId).single();
       if (data) {
         set({ user: data });
+        Purchases.logIn(userId);
         return;
       }
       // If user does not exist, create a new user
@@ -42,13 +44,14 @@ export const useSupabase = create<SupabaseStore>((set, get) => ({
         .from("users")
         .insert({
           id: userId,
-          remaning_credits: 5,
+          remaining_credits: 5,
         })
         .select()
         .single();
 
       if (newUser) {
         set({ user: newUser });
+        Purchases.logIn(userId);
       }
     } catch (error) {
       throw error;

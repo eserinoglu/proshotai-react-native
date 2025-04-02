@@ -6,6 +6,7 @@ import { ImageMinus, X } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useHistoryDatabase } from "@/stores/useHistoryDatabase";
 import BottomSheet from "@/components/BottomSheet";
+import { useError } from "@/stores/useError";
 
 export default function History() {
   const { allHistory, fetchHistory } = useHistoryDatabase();
@@ -96,13 +97,17 @@ function HistoryClearConfirmationSheet({
 }) {
   const { deleteAllHistory } = useHistoryDatabase();
   const [isDeleting, setIsDeleting] = React.useState(false);
+
+  // Error state
+  const { setErrorMessage } = useError();
+
   const handleDeleteHistory = async () => {
     setIsDeleting(true);
     try {
       await deleteAllHistory();
       setIsVisibleHistoryClearSheet(false);
     } catch (error) {
-      console.error("Error deleting history:", error);
+      setErrorMessage("Failed to delete history. Please try again.", handleDeleteHistory);
     } finally {
       setIsDeleting(false);
     }

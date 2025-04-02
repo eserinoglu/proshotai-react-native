@@ -4,10 +4,14 @@ import BottomSheet from "./BottomSheet";
 import { useRevenueCat } from "../stores/useRevenueCat";
 import { PurchasesPackage } from "react-native-purchases";
 import * as Haptics from "expo-haptics";
-import { Activity, X } from "lucide-react-native";
+import { X } from "lucide-react-native";
+import { useError } from "@/stores/useError";
 
 export default function CustomPaywall() {
   const offeringName = "credits";
+
+  // Error states
+  const { setErrorMessage } = useError();
 
   const { showPaywall, setShowPaywall, offerings, purchase, restore } = useRevenueCat();
   const [selectedPackage, setSelectedPackage] = React.useState<PurchasesPackage | null>(
@@ -21,7 +25,11 @@ export default function CustomPaywall() {
     try {
       await purchase(selectedPackage);
     } catch (error) {
-      console.error("Purchase error:", error);
+      if (error instanceof Error) {
+        setErrorMessage(error.message, handlePurchase);
+        return;
+      }
+      setErrorMessage("An error occurred while processing your purchase", handlePurchase);
     } finally {
       setIsPurchasing(false);
     }
@@ -35,8 +43,11 @@ export default function CustomPaywall() {
       await restore();
       alert("Purchase restored successfully");
     } catch (error) {
-      alert("Error restoring purchase" + error);
-      console.error("Restore error:", error);
+      if (error instanceof Error) {
+        setErrorMessage(error.message, handleRestore);
+        return;
+      }
+      setErrorMessage("An error occurred while restoring purchases", handleRestore);
     } finally {
       setIsRestoring(false);
     }

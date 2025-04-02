@@ -10,7 +10,6 @@ export const getUserId = async (): Promise<string> => {
     }
     return userId;
   } catch (error) {
-    console.error("Error getting user ID:", error);
-    throw new Error("Error getting user ID");
+    throw error
   }
 };
