@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'product-photo'
+rootProject.name = 'ProShot'
 
 dependencyResolutionManagement {
   versionCatalogs {

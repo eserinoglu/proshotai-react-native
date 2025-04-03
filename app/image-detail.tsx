@@ -311,6 +311,7 @@ function ActionOverlay({
   const [isSaved, setIsSaved] = useState(false);
   const handleDownloadImage = async () => {
     setIsSaving(true);
+    setIsSaved(false);
     try {
       await handleDownload();
       setIsSaved(true);
@@ -341,13 +342,16 @@ function ActionOverlay({
         style={{ paddingBottom: insets.bottom + 10 }}
         className="w-full flex flex-row items-center justify-between px-horizontal bg-black/30 pt-4"
       >
-        <TouchableOpacity className="flex w-[50px] items-center justify-center bg-tint rounded-full aspect-square">
+        <TouchableOpacity
+          onPress={handleDownloadImage}
+          className="flex w-[50px] items-center justify-center bg-tint rounded-full aspect-square"
+        >
           {isSaving ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : isSaved ? (
             <CheckCircle size={20} color={"#fff"} />
           ) : (
-            <Download size={20} color={"#fff"} onPress={handleDownloadImage} />
+            <Download size={20} color={"#fff"} />
           )}
         </TouchableOpacity>
         <View className="flex flex-row items-center gap-2">
@@ -413,6 +417,7 @@ function EditImageSheet({
           placeholderTextColor={"#787878"}
         />
         <TouchableOpacity
+          disabled={isEditing || !editPrompt}
           onPress={handleEditImage}
           className="w-full bg-tint h-[45px] rounded-xl flex items-center justify-center"
         >

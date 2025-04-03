@@ -32,7 +32,7 @@ export default function RootLayout() {
   const [initError, setInitError] = useState<string | null>(null);
 
   const initializeApp = async () => {
-    setInitError(null)
+    setInitError(null);
     setIsAppReady(false);
     try {
       await initHistoryDatabase();
@@ -81,8 +81,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={DarkTheme}>
       <GestureHandlerRootView className="flex-1">
+        <StatusBar style="light" />
         <SafeAreaProvider>
-          <StatusBar style="auto" />
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
           </Stack>
