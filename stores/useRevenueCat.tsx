@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import Purchases, { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
-import { useSupabase } from "./useSupabase";
 
 type RevenueCatStore = {
   showPaywall: boolean;
@@ -34,7 +33,6 @@ export const useRevenueCat = create<RevenueCatStore>((set) => ({
       const purchase = await Purchases.purchasePackage(pkg);
       const splitted = pkg.product.identifier.split(".");
       const creditBought = parseInt(splitted[1], 10);
-      await useSupabase.getState().addCredits(creditBought);
       set({ showPaywall: false });
     } catch (error) {
       throw error;

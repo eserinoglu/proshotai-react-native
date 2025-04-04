@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, FlatList, TextInput } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import { Coins, History, ImagePlus, WandSparkles, LoaderCircle } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { allPresentationTypes } from "@/types/presentationType";
@@ -8,13 +8,13 @@ import { allBackgroundTypes } from "@/types/backgroundType";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useImageGeneration } from "@/stores/useImageGeneration";
 import { useRouter } from "expo-router";
-import { useSupabase } from "@/stores/useSupabase";
 import { useRevenueCat } from "@/stores/useRevenueCat";
 import { useError } from "@/stores/useError";
+import { useUser } from "@/stores/useUser";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const { user } = useSupabase();
+  const { user } = useUser();
   return (
     <SafeAreaView edges={["top", "right", "left"]} className="flex-1">
       <ScrollView
@@ -35,7 +35,9 @@ export default function Home() {
         <GenerateButton />
 
         {/* User UUID */}
-        <Text selectable className="text-secondaryText text-[10px] mx-auto">{user?.id}</Text>
+        <Text selectable className="text-secondaryText text-[10px] mx-auto">
+          {user?.id}
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -43,8 +45,8 @@ export default function Home() {
 
 function Header() {
   const router = useRouter();
-  const { user } = useSupabase();
   const { setShowPaywall } = useRevenueCat();
+  const { user } = useUser();
   return (
     <View className="w-full flex flex-row items-center justify-between px-horizontal">
       <TouchableOpacity onPress={() => setShowPaywall(true)} className="rect flex flex-row items-center gap-2">
@@ -229,7 +231,7 @@ function GenerateButton() {
         });
       }
     } catch (error) {
-      setErrorMessage("An error occurred while generating the image. Please try again.", handleImageGeneration);
+      setErrorMessage(JSON.stringify(error), handleImageGeneration);
     } finally {
       setIsGenerating(false);
     }

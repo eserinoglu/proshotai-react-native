@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
-import { useSupabase } from "@/stores/useSupabase";
 import CustomPaywall from "@/components/Paywall";
 import { useRevenueCat } from "@/stores/useRevenueCat";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import ErrorModal from "@/components/ErrorModal";
+import { useUser } from "@/stores/useUser";
 
 // Disable font-scaling
 (Text as any).defaultProps = {
@@ -25,8 +25,8 @@ import ErrorModal from "@/components/ErrorModal";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { checkUser } = useSupabase();
   const { initRevenueCat, getOfferings } = useRevenueCat();
+  const { checkUser } = useUser();
   const [isAppReady, setIsAppReady] = useState(false);
 
   const [initError, setInitError] = useState<string | null>(null);
@@ -36,8 +36,8 @@ export default function RootLayout() {
     setIsAppReady(false);
     try {
       await initHistoryDatabase();
-      await initRevenueCat();
       await checkUser();
+      await initRevenueCat();
       await getOfferings();
     } catch (error) {
       if (error instanceof Error) {

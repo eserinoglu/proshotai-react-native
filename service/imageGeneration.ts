@@ -1,8 +1,5 @@
+import { useUser } from "@/stores/useUser";
 import { uriToBase64 } from "@/utils/uriToBase64";
-import { GoogleGenAI } from "@google/genai";
-
-const key = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-const genAI = new GoogleGenAI({ apiKey: key });
 
 export const generateImage = async (
   imageUri: string,
@@ -11,6 +8,10 @@ export const generateImage = async (
   backgroundTypePrompt: string,
   userPrompt: string | undefined = undefined
 ): Promise<string | undefined> => {
+  const user = useUser.getState().user;
+  if (!user) {
+    throw new Error("User not found");
+  }
   const imageBase64 = await uriToBase64(imageUri);
   if (!imageBase64) {
     throw new Error("No image uploaded");
@@ -24,77 +25,68 @@ Generate a high-resolution, photorealistic product photograph suitable for e-com
     basePrompt += ` Additionally, consider the following user request: "${userPrompt}"`;
   }
 
-  const contents = [
-    {
-      text: basePrompt.trim(),
-    },
-    {
-      inlineData: {
-        mimeType: "image/png",
-        data: imageBase64,
-      },
-    },
-  ];
   try {
-    const response = await genAI.models.generateContent({
-      model: "gemini-2.0-flash-exp-image-generation",
-      contents,
-      config: {
-        responseModalities: ["image", "text"],
+    const response = await fetch("http://localhost:1905/image/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${user.id}`,
       },
+      body: JSON.stringify({
+        prompt: basePrompt,
+        imageBase64: imageBase64,
+      }),
     });
-    const candidates = response?.candidates ?? [];
-    if (candidates.length === 0) {
-      throw new Error("No candidates returned from image generation service.");
-    }
-    for (const part of candidates[0]?.content?.parts ?? []) {
-      if (part.text) {
-        console.log(part.text);
-      } else if (part.inlineData) {
-        return part.inlineData.data;
+    const data = await response.json();
+    if (response.ok) {
+      const image = data?.image;
+      if (image) {
+        return image;
+      } else {
+        throw new Error("No image returned from the API.");
       }
+    } else {
+      throw data.error;
     }
   } catch (error) {
+    console.error("Error generating image:", error);
     throw error;
   }
 };
 
 export const editImage = async (imageUri: string, editPrompt: string): Promise<string | undefined> => {
+  const user = useUser.getState().user;
+  if (!user) {
+    throw new Error("User not found");
+  }
   // Convert the image URI to base64
   const imageBase64 = await uriToBase64(imageUri);
   if (!imageBase64) {
     throw new Error("No image uploaded");
   }
   const prompt = `Edit the image based on the following user request: "${editPrompt}"`;
-  const contents = [
-    {
-      text: prompt.trim(),
-    },
-    {
-      inlineData: {
-        mimeType: "image/png",
-        data: imageBase64,
-      },
-    },
-  ];
   try {
-    const response = await genAI.models.generateContent({
-      model: "gemini-2.0-flash-exp-image-generation",
-      contents,
-      config: {
-        responseModalities: ["image", "text"],
+    const response = await fetch("http://localhost:1905/image/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${user.id}`,
       },
+      body: JSON.stringify({
+        prompt: prompt,
+        imageBase64: imageBase64,
+      }),
     });
-    const candidates = response?.candidates ?? [];
-    if (candidates.length === 0) {
-      throw new Error("No candidates returned from image generation service.");
-    }
-    for (const part of candidates[0]?.content?.parts ?? []) {
-      if (part.text) {
-        console.log(part.text);
-      } else if (part.inlineData) {
-        return part.inlineData.data;
+    const data = await response.json();
+    if (response.ok) {
+      const image = data?.image;
+      if (image) {
+        return image;
+      } else {
+        throw new Error("No image returned from the API.");
       }
+    } else {
+      throw data.error;
     }
   } catch (error) {
     throw error;

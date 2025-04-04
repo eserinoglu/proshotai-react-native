@@ -6,9 +6,9 @@ import { generateImage, editImage } from "@/service/imageGeneration";
 import { exportToGallery } from "@/service/imageSave";
 import { base64ToUri } from "@/utils/base64ToUri";
 import { useHistoryDatabase } from "@/stores/useHistoryDatabase";
-import { useSupabase } from "./useSupabase";
 import { GenerationHistory } from "@/types/generationHistory";
 import { useRevenueCat } from "./useRevenueCat";
+import { useUser } from "./useUser";
 
 type ImageGenerationStore = {
   uploadedImage: string | null;
@@ -30,11 +30,6 @@ export const useImageGeneration = create<ImageGenerationStore>((set, get) => ({
   uploadedImage: null,
   setUploadedImage: (image) => set({ uploadedImage: image }),
   imageGeneration: async (imageUri: string) => {
-    const user = useSupabase.getState().user;
-    if (!user?.remaining_credits || user.remaining_credits < 1) {
-      useRevenueCat.getState().setShowPaywall(true);
-      return;
-    }
     const { selectedShotSize, selectedPresentationType, selectedBackgroundType, userPrompt } = get();
     const response = await generateImage(
       imageUri,
@@ -53,17 +48,12 @@ export const useImageGeneration = create<ImageGenerationStore>((set, get) => ({
         createdAt: new Date().toISOString(),
         userInput: userPrompt,
       };
+      useUser.getState().removeCredits(1);
       await useHistoryDatabase.getState().newHistory(generatedImage);
-      await useSupabase.getState().removeCredits(1);
       return generatedImage;
     }
   },
   imageEditing: async (imageUri: string, prompt: string) => {
-    const user = useSupabase.getState().user;
-    if (!user?.remaining_credits || user.remaining_credits < 1) {
-      useRevenueCat.getState().setShowPaywall(true);
-      return;
-    }
     const response = await editImage(imageUri, prompt);
     if (response) {
       const uri = await base64ToUri(response);
@@ -76,7 +66,7 @@ export const useImageGeneration = create<ImageGenerationStore>((set, get) => ({
         userInput: prompt,
       };
       await useHistoryDatabase.getState().newHistory(generatedImage);
-      await useSupabase.getState().removeCredits(1);
+      useUser.getState().removeCredits(1);
       return generatedImage;
     }
   },
