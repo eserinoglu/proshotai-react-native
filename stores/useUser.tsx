@@ -20,7 +20,7 @@ export const useUser = create<UserStore>((set, get) => ({
   checkUser: async () => {
     const userId = await SecureStore.getItemAsync("userId");
     if (userId) {
-      const response = await fetch("http://localhost:1905/user/getUser", {
+      const response = await fetch("https://proshot-api.onrender.com/user/getUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export const useUser = create<UserStore>((set, get) => ({
         console.error("Failed to fetch user data");
       }
     } else {
-      const response = await fetch("http://localhost:1905/user/register", {
+      const response = await fetch("https://proshot-api.onrender.com/user/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

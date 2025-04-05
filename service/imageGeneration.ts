@@ -26,7 +26,7 @@ Generate a high-resolution, photorealistic product photograph suitable for e-com
   }
 
   try {
-    const response = await fetch("http://localhost:1905/image/generate", {
+    const response = await fetch("https://proshot-api.onrender.com/image/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export const editImage = async (imageUri: string, editPrompt: string): Promise<s
   }
   const prompt = `Edit the image based on the following user request: "${editPrompt}"`;
   try {
-    const response = await fetch("http://localhost:1905/image/generate", {
+    const response = await fetch("https://proshot-api.onrender.com/image/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import Purchases, { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
+import { useUser } from "./useUser";
 
 type RevenueCatStore = {
   showPaywall: boolean;
@@ -17,11 +18,12 @@ export const useRevenueCat = create<RevenueCatStore>((set) => ({
   showPaywall: false,
   setShowPaywall: (show) => set({ showPaywall: show }),
   initRevenueCat: async () => {
-    if (!iosKey) {
+    const user = useUser.getState().user;
+    if (!iosKey || !user) {
       throw new Error("No RevenueCat key found");
     }
     try {
-      Purchases.configure({ apiKey: iosKey });
+      Purchases.configure({ apiKey: iosKey, appUserID: user.id });
     } catch (error) {
       throw error;
     }
@@ -29,12 +31,23 @@ export const useRevenueCat = create<RevenueCatStore>((set) => ({
   offerings: {},
   purchase: async (pkg) => {
     try {
-      console.log(pkg.product.identifier);
-      const purchase = await Purchases.purchasePackage(pkg);
-      const splitted = pkg.product.identifier.split(".");
-      const creditBought = parseInt(splitted[1], 10);
+      await Purchases.purchasePackage(pkg);
+      let creditBought = 0;
+      switch (pkg.product.identifier) {
+        case "rc.20credits":
+          creditBought = 20;
+          break;
+        case "rc.50credits":
+          creditBought = 50;
+          break;
+        case "rc.100credits":
+          creditBought = 100;
+          break;
+      }
+      useUser.getState().addCredits(creditBought);
       set({ showPaywall: false });
     } catch (error) {
+      console.error("Error purchasing package:", error);
       throw error;
     }
   },
