@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, FlatList, TextInput } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image, FlatList, TextInput, Linking, Alert } from "react-native";
 import React from "react";
-import { Coins, History, ImagePlus, WandSparkles, LoaderCircle } from "lucide-react-native";
+import { Coins, History, ImagePlus, WandSparkles, LoaderCircle, Headset } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { allPresentationTypes } from "@/types/presentationType";
 import { allShotSizes } from "@/types/shotSize";
@@ -47,16 +47,37 @@ function Header() {
   const router = useRouter();
   const { setShowPaywall } = useRevenueCat();
   const { user } = useUser();
+
+  const receiver = "ethemserinoglu12@gmail.com";
+  const subject = "Feedback or Support Request for ProShot AI";
+  const body = `\n\n\nUser ID: ${user?.id}\n`;
+
+  const mailUrl = `mailto:${receiver}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  const handleMailLinking = () => {
+    Linking.openURL(mailUrl).catch((error) => {
+      Alert.alert(
+        "Error",
+        "Unable to open mail app. Please check your mail app settings."
+      );
+    });
+  };
+
   return (
     <View className="w-full flex flex-row items-center justify-between px-horizontal">
       <TouchableOpacity onPress={() => setShowPaywall(true)} className="rect flex flex-row items-center gap-2">
         <Coins size={20} color="#FF9900" />
         <Text className="text-white font-medium">{user?.remaining_credits} CREDITS</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push("/history")} className="rect flex flex-row items-center gap-2">
-        <History size={20} color="#787878" />
-        <Text className="font-medium text-secondaryText">History</Text>
-      </TouchableOpacity>
+      <View className="flex flex-row gap-3 items-center">
+        <TouchableOpacity onPress={() => router.push("/history")} className="rect flex flex-row items-center gap-2">
+          <History size={20} color="#787878" />
+          <Text className="font-medium text-secondaryText">History</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleMailLinking} className="rect">
+          <Headset size={20} color="#787878" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
