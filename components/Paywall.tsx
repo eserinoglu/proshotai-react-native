@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator, Linking } from "react-native";
 import React from "react";
 import BottomSheet from "./BottomSheet";
 import { useRevenueCat } from "../stores/useRevenueCat";
@@ -95,12 +95,22 @@ export default function CustomPaywall() {
         </TouchableOpacity>
         {/* Footer Links and Restore Button */}
         <View className="w-full flex flex-row items-center">
-          <Text className="text-white/40 flex-1 text-center text-[12px]">Privacy Policy</Text>
+          <TouchableOpacity
+            className="flex-1"
+            onPress={() => Linking.openURL("https://proshotapp.vercel.app/privacy-policy")}
+          >
+            <Text className="text-white/40 text-center text-[12px]">Privacy Policy</Text>
+          </TouchableOpacity>
           <TouchableOpacity className="flex flex-row items-center flex-1 gap-1 opacity-40" onPress={handleRestore}>
             {isRestoring && <ActivityIndicator size={12} color="white" />}
             <Text className="text-white flex-1 text-center text-[12px]">Restore Purchase</Text>
           </TouchableOpacity>
-          <Text className="text-white/40 flex-1 text-center text-[12px]">Terms</Text>
+          <TouchableOpacity
+            className="flex-1 text-center"
+            onPress={() => Linking.openURL("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")}
+          >
+            <Text className="text-white/40 text-center text-[12px]">Terms</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </BottomSheet>
