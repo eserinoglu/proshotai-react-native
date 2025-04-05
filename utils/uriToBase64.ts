@@ -6,7 +6,7 @@ export const uriToBase64 = async (uri: string): Promise<string> => {
     const file = await FileSystem.getInfoAsync(uri);
     if (file.exists) {
       const resizedImage = await ImageManipulator.manipulateAsync(uri, [{ resize: { width: 1024 } }], {
-        compress: 0.1,
+        compress: 0.5,
         format: ImageManipulator.SaveFormat.JPEG,
       });
       const base64String = await FileSystem.readAsStringAsync(resizedImage.uri, {

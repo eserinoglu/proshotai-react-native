@@ -86,7 +86,7 @@ function UploadImage() {
   const { uploadedImage, setUploadedImage } = useImageGeneration();
   const uploadImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      quality: 0.4,
+      quality: 0.2,
       mediaTypes: ["images"],
     });
     if (!result.canceled) {

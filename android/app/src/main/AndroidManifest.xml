@@ -28,6 +28,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="com.eserinoglu.productphoto"/>
+        <data android:scheme="exp+pro-shot"/>
       </intent-filter>
     </activity>
   </application>

@@ -1,5 +1,6 @@
 import { useUser } from "@/stores/useUser";
 import { uriToBase64 } from "@/utils/uriToBase64";
+import * as FileSystem from "expo-file-system";
 
 export const generateImage = async (
   imageUri: string,
@@ -12,19 +13,20 @@ export const generateImage = async (
   if (!user) {
     throw new Error("User not found");
   }
-  const imageBase64 = await uriToBase64(imageUri);
   const prompt = `Generate a high-resolution, photorealistic product photograph suitable for e-commerce and advertising. The primary subject is the provided product image. Focus on sharp details, accurate color representation, realistic material textures, and natural, flattering lighting that includes soft shadows and subtle highlights to define the product's form. Ensure a visually appealing and balanced composition. The overall aesthetic must be professional, clean, and high-quality. Specific details regarding presentation, shot angle, and background will follow. Avoid generating text or logos unless specifically requested. ${presentationTypePrompt} ${backgroundTypePrompt} ${shotSizePrompt}
-    ${userPrompt ? `Additionally, consider the following user request: "${userPrompt}"` : ""}`;
+    ${
+      userPrompt ? `Additionally, consider the following user request: "${userPrompt}"` : ""
+    }. Never generate any obscene, inappropriate or sexual content.`;
 
   try {
-    const response = await fetch("https://proshot-api.onrender.com/image/generate", {
+    const response = await fetch("http://localhost:1905/image/generate", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${user.id}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        imageBase64: imageBase64,
+        imageBase64: await uriToBase64(imageUri),
         prompt,
       }),
     });
@@ -46,18 +48,17 @@ export const editImage = async (imageUri: string, editPrompt: string): Promise<s
     throw new Error("User not found");
   }
 
-  const imageBase64 = await uriToBase64(imageUri);
-  const prompt = `Edit the image based on the following user request: "${editPrompt}"`;
+  const prompt = `Edit the image based on the following user request: "${editPrompt}". Also enhance the image quality, ensuring sharp details, accurate color representation, and realistic material textures. The overall aesthetic must be professional, clean, and high-quality. Avoid generating text or logos unless specifically requested.`;
 
   try {
-    const response = await fetch("https://proshot-api.onrender.com/image/generate", {
+    const response = await fetch("http://localhost:1905/image/generate", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${user.id}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        imageBase64: imageBase64,
+        imageBase64: await uriToBase64(imageUri),
         prompt,
       }),
     });

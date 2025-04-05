@@ -42,7 +42,7 @@ export default function ImageDetail() {
         params: { generatedImage: JSON.stringify(generated) },
       });
     } catch (error) {
-      setErrorMessage(error as string, handleEdit);
+      setErrorMessage(JSON.stringify(error), handleEdit);
     }
   };
 

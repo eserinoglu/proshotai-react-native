@@ -2,12 +2,16 @@ import * as FileSystem from "expo-file-system";
 
 export async function base64ToUri(base64: string): Promise<string> {
   try {
-    const filename = `${new Date().toISOString()}image.jpg`;
+    const filename = `${new Date().toISOString()}.jpg`;
     const uri = `${FileSystem.documentDirectory}${filename}`;
-    await FileSystem.writeAsStringAsync(uri, base64, {
+
+    // "file://" prefix'ini eklememiz gerek
+    const fileUri = uri.startsWith("file://") ? uri : `file://${uri}`;
+
+    await FileSystem.writeAsStringAsync(fileUri, base64, {
       encoding: FileSystem.EncodingType.Base64,
     });
-    return uri;
+    return fileUri;
   } catch (error) {
     throw error;
   }

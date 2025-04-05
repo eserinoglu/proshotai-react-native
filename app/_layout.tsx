@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import "@/global.css";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { initHistoryDatabase } from "@/service/database/historyDatabase";
+import { initHistoryDatabase } from "@/database/historyDatabase";
 import { useEffect, useState } from "react";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { GenerationHistory } from "../types/generationHistory";
-import { createHistory, deleteHistory, getHistory, clearHistory } from "../service/database/historyDatabase";
+import { createHistory, deleteHistory, getHistory, clearHistory } from "../database/historyDatabase";
 
 type HistoryDatabase = {
   allHistory: GenerationHistory[];
