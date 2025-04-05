@@ -1,6 +1,7 @@
 import { useUser } from "@/stores/useUser";
 import { uriToBase64 } from "@/utils/uriToBase64";
-import * as FileSystem from "expo-file-system";
+
+const baseUrl = "https://proshot-api.onrender.com";
 
 export const generateImage = async (
   imageUri: string,
@@ -19,7 +20,7 @@ export const generateImage = async (
     }. Never generate any obscene, inappropriate or sexual content.`;
 
   try {
-    const response = await fetch("http://localhost:1905/image/generate", {
+    const response = await fetch(`${baseUrl}/image/generate`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${user.id}`,
@@ -51,7 +52,7 @@ export const editImage = async (imageUri: string, editPrompt: string): Promise<s
   const prompt = `Edit the image based on the following user request: "${editPrompt}". Also enhance the image quality, ensuring sharp details, accurate color representation, and realistic material textures. The overall aesthetic must be professional, clean, and high-quality. Avoid generating text or logos unless specifically requested.`;
 
   try {
-    const response = await fetch("http://localhost:1905/image/generate", {
+    const response = await fetch(`${baseUrl}/image/generate`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${user.id}`,

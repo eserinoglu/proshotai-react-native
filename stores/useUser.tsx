@@ -8,6 +8,8 @@ type User = {
   remaining_credits: number;
 };
 
+const baseUrl = "https://proshot-api.onrender.com";
+
 type UserStore = {
   user: User | null;
   checkUser: () => Promise<void>;
@@ -20,7 +22,7 @@ export const useUser = create<UserStore>((set, get) => ({
   checkUser: async () => {
     const userId = await SecureStore.getItemAsync("userId");
     if (userId) {
-      const response = await fetch("https://proshot-api.onrender.com/user/getUser", {
+      const response = await fetch(`${baseUrl}/user/getUser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +37,7 @@ export const useUser = create<UserStore>((set, get) => ({
         console.error("Failed to fetch user data");
       }
     } else {
-      const response = await fetch("https://proshot-api.onrender.com/user/register", {
+      const response = await fetch(`${baseUrl}/user/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
