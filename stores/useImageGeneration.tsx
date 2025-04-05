@@ -30,6 +30,11 @@ export const useImageGeneration = create<ImageGenerationStore>((set, get) => ({
   uploadedImage: null,
   setUploadedImage: (image) => set({ uploadedImage: image }),
   imageGeneration: async (imageUri: string) => {
+    const user = useUser.getState().user;
+    if (!user || user.remaining_credits <= 0) {
+      useRevenueCat.getState().setShowPaywall(true);
+      return;
+    }
     const { selectedShotSize, selectedPresentationType, selectedBackgroundType, userPrompt } = get();
     const response = await generateImage(
       imageUri,
@@ -54,6 +59,11 @@ export const useImageGeneration = create<ImageGenerationStore>((set, get) => ({
     }
   },
   imageEditing: async (imageUri: string, prompt: string) => {
+    const user = useUser.getState().user;
+    if (!user || user.remaining_credits <= 0) {
+      useRevenueCat.getState().setShowPaywall(true);
+      return;
+    }
     const response = await editImage(imageUri, prompt);
     if (response) {
       const uri = await base64ToUri(response);
