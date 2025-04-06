@@ -8,7 +8,7 @@ type User = {
   remaining_credits: number;
 };
 
-const baseUrl = "https://proshot-api.onrender.com";
+const baseUrl = "https://proshot-api.vercel.app";
 
 type UserStore = {
   user: User | null;

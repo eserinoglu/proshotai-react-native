@@ -56,10 +56,7 @@ function Header() {
 
   const handleMailLinking = () => {
     Linking.openURL(mailUrl).catch((error) => {
-      Alert.alert(
-        "Error",
-        "Unable to open mail app. Please check your mail app settings."
-      );
+      Alert.alert("Error", "Unable to open mail app. Please check your mail app settings.");
     });
   };
 
@@ -252,7 +249,11 @@ function GenerateButton() {
         });
       }
     } catch (error) {
-      setErrorMessage(JSON.stringify(error), handleImageGeneration);
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Image genearation failed with unknown error.");
+      }
     } finally {
       setIsGenerating(false);
     }
