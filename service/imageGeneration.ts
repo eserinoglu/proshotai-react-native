@@ -1,7 +1,7 @@
 import { useUser } from "@/stores/useUser";
 import { uriToBase64 } from "@/utils/uriToBase64";
 
-const baseUrl = "https://proshot-api.onrender.com";
+const baseUrl = "http://localhost:1905";
 
 export const generateImage = async (
   imageUri: string,
@@ -14,7 +14,26 @@ export const generateImage = async (
   if (!user) {
     throw new Error("User not found");
   }
-  const prompt = `Generate a high-resolution, photorealistic product photograph suitable for e-commerce and advertising. The primary subject is the provided product image. Focus on sharp details, accurate color representation, realistic material textures, and natural, flattering lighting that includes soft shadows and subtle highlights to define the product's form. Ensure a visually appealing and balanced composition. The overall aesthetic must be professional, clean, and high-quality. Specific details regarding presentation, shot angle, and background will follow. Avoid generating text or logos unless specifically requested. ${presentationTypePrompt} ${backgroundTypePrompt} ${shotSizePrompt} ${userPrompt ? `Additionally, consider the following user request: "${userPrompt}"` : ""}. Never generate any obscene, inappropriate or sexual content.`;
+  const imageBase64 = await uriToBase64(imageUri);
+  const prompt = `
+      You are a professional product photography AI. 
+      Your task is to transform the provided product image into a high-resolution, photorealistic product photograph suitable for e-commerce. 
+      NEVER change the core look or design of the product.
+
+      Details:
+      - Subject: the provided product image (keep proportions and design intact).
+      - Style: ${presentationTypePrompt}
+      - Background: ${backgroundTypePrompt}
+      - Shot: ${shotSizePrompt}
+      - User request: ${userPrompt || "None"}
+
+      Requirements:
+      - Sharp details, accurate colors, realistic textures
+      - Professional lighting (soft shadows, subtle highlights)
+      - Clean and commercial-grade composition
+      - No text or logos unless requested
+      - No inappropriate content
+`;
 
   try {
     const response = await fetch(`${baseUrl}/image/generate`, {
@@ -24,7 +43,7 @@ export const generateImage = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        imageBase64: await uriToBase64(imageUri),
+        imageBase64: imageBase64,
         prompt,
       }),
     });

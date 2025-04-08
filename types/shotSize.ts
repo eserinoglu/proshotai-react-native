@@ -8,7 +8,7 @@ export const allShotSizes: ShotSize[] = [
   {
     type: "Close-Up",
     prompt:
-      "Frame the shot extremely close to the product or a specific, important part of it. Emphasize intricate details, material textures, craftsmanship, or unique features. Apply a shallow depth of field to isolate the subject and softly blur the immediate background.",
+      "Frame the shot close to the product or a specific, important part of it. Emphasize intricate details, material textures, craftsmanship, or unique features. Apply a shallow depth of field to isolate the subject and softly blur the immediate background.",
     thumbnail: require("@/assets/images/close.png"),
   },
   {
