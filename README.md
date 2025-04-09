@@ -6,6 +6,9 @@ ProShot AI is a powerful mobile application that transforms regular product phot
 
 <img src="https://github.com/user-attachments/assets/e765e3a7-5d7a-4a5b-89dd-d4bc5a1526d2" width="200" height="auto" style='border-radius:24px'/>
 <img src="https://github.com/user-attachments/assets/9e0b5d41-a3d1-4ba5-a39e-6960a60a5730" width="200" height="auto" style='border-radius:24px'/>
+<img src="https://github.com/user-attachments/assets/c9aff12e-671e-4cfd-b64e-a1c985f7069b" width="200" height="auto" style='border-radius:24px'/>
+<img src="https://github.com/user-attachments/assets/ce9fc4f7-0631-414a-bee5-a5b7780a3d97" width="200" height="auto" style='border-radius:24px'/>
+
 
 ## Features
 
