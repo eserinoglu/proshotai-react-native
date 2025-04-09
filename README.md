@@ -1,50 +1,85 @@
-# Welcome to your Expo app 👋
+# ProShot AI - Professional Product Photography Generator
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> ⚠️ **IMPORTANT**: The ProShot AI API must be set up and running before you can use the mobile app. Please follow the API setup instructions below before proceeding with the mobile app setup.
 
-## Get started
+ProShot AI is a powerful mobile application that transforms regular product photos into professional, e-commerce-ready product photographs using advanced AI technology.
 
-1. Install dependencies
+## Features
 
+- **AI-Powered Image Generation**: Transform regular product photos into professional, high-quality product photographs
+- **Customizable Shot Types**: Multiple presentation types, shot sizes, and background options
+- **Credit System**: Managed credit system for image generation
+- **History Tracking**: View and manage your generated images history
+- **User-Friendly Interface**: Clean and intuitive UI built with React Native
+
+## Technology Stack
+
+- **Frontend Framework**: React Native with Expo
+- **Navigation**: Expo Router
+- **Styling**: NativeWind (TailwindCSS for React Native)
+- **State Management**: Custom React hooks and Zustan stores
+- **Authentication & Storage**:
+  - Supabase
+  - Expo SecureStore
+  - SQLite for local storage
+- **Image Handling**:
+  - Expo ImagePicker
+  - Expo ImageManipulator
+  - Expo MediaLibrary
+- **Payment Integration**: RevenueCat for in-app purchases
+- **UI Components**: Lucide React Native for icons
+
+## API Setup (Required)
+
+This application requires a backend API to function properly. You must set up and run the API before using the mobile app.
+
+### API Features
+
+- Image generation using AI models
+- User authentication and credit management
+- Image storage and retrieval
+
+👉 **[View the Complete API Documentation](https://github.com/eserinoglu/proshot-api)** for detailed setup instructions and API reference.
+
+> Note: Keep the API server running while using the mobile app. All app features require an active API connection.
+
+## Mobile App Setup
+
+> ⚠️ **Prerequisite**: Ensure the API server is set up and running before proceeding.
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/eserinoglu/proshotai-react-native
+   cd proshotai-react-native
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
-
-2. Start the app
-
+3. Set up the API (follow instructions in the API repository)
+4. Start the development server:
    ```bash
-    npx expo start
+   npm run ios # for iOS
+   # or
+   npm run android # for Android
    ```
 
-In the output, you'll find options to open the app in a
+> Note: The app will not function properly if the API server is not running.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Environment Setup
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Make sure you have:
 
-## Get a fresh project
+- Node.js installed
+- Expo CLI installed globally
+- iOS Simulator (for iOS development)
+- Android Studio (for Android development)
 
-When you're ready, run:
+## Contact & Support
 
-```bash
-npm run reset-project
-```
+For support or feedback, contact: ethemserinoglu12@gmail.com
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## License
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+All rights reserved. This project is proprietary and confidential.
