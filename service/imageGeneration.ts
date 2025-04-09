@@ -1,7 +1,7 @@
 import { useUser } from "@/stores/useUser";
 import { uriToBase64 } from "@/utils/uriToBase64";
 
-const baseUrl = "http://localhost:1905";
+const baseUrl = "http://localhost:8080";
 
 export const generateImage = async (
   imageUri: string,

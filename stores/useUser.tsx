@@ -8,7 +8,7 @@ type User = {
   remaining_credits: number;
 };
 
-const baseUrl = "https://proshot-api.onrender.com";
+const baseUrl = "http://localhost:8080";
 
 type UserStore = {
   user: User | null;
