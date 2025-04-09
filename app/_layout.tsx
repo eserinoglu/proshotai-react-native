@@ -37,7 +37,10 @@ export default function RootLayout() {
     try {
       await initHistoryDatabase();
       await checkUser();
-      await initRevenueCat();
+      // If you want to initialize RevenueCat, create an .env file in the root directory.
+      // Add the following line:
+      // EXPO_PUBLIC_REVENUECAT_IOS_KEY = [YOUR_KEY]
+      // await initRevenueCat();
       await getOfferings();
     } catch (error) {
       if (error instanceof Error) {
