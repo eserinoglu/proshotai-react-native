@@ -1,3 +1,5 @@
+<img src="https://github.com/user-attachments/assets/5fb1a4cc-808c-458b-8db9-c31c071166dc" width="140" height="140"/>
+
 # ProShot AI - Professional Product Photography Generator
 
 > ⚠️ **IMPORTANT**: The ProShot AI API must be set up and running before you can use the mobile app. Please follow the API setup instructions below before proceeding with the mobile app setup.
